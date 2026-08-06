@@ -32,6 +32,13 @@ const schema = defineSchema(
       role: v.optional(roleValidator), // role of the user. do not remove
     }).index("email", ["email"]), // index for the email. do not remove or modify
 
+    // newsletter signups collected by the landing page
+    subscribers: defineTable({
+      email: v.string(),
+      source: v.optional(v.string()),
+      createdAt: v.number(),
+    }).index("by_email", ["email"]),
+
     // add other tables here
 
     // tableName: defineTable({

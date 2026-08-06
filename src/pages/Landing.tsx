@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Brand } from "@/components/Brand";
 import { FoodFactWidget } from "@/components/food-fact";
+import { SubscribeForm } from "@/components/subscribe-form";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { INGREDIENT_BY_ID } from "@/data/ingredients";
 import { findRecipes } from "@/lib/recipe-matcher";
@@ -395,6 +396,35 @@ function FunFacts() {
 }
 
 /* ------------------------------------------------------------------ */
+/* Newsletter                                                          */
+/* ------------------------------------------------------------------ */
+function Newsletter() {
+  return (
+    <section className="border-t border-border/70 bg-secondary/30 py-20 sm:py-24">
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
+        <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
+          <p className="text-sm font-semibold uppercase tracking-widest text-primary">
+            Never miss a recipe
+          </p>
+          <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+            If you&apos;d like to be updated on any food recipe,
+            <span className="block text-primary">subscribe</span>
+          </h2>
+          <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted-foreground sm:text-base">
+            One short, tasty email a week with new recipes and food facts. No
+            spam, no clutter — unsubscribe anytime.
+          </p>
+          <SubscribeForm className="mx-auto mt-8 max-w-lg" />
+          <p className="mt-4 text-xs text-muted-foreground">
+            🔒 Your email stays private and is only used for recipe updates.
+          </p>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /* Page                                                                */
 /* ------------------------------------------------------------------ */
 export default function Landing() {
@@ -543,6 +573,9 @@ export default function Landing() {
           </motion.div>
         </div>
       </section>
+
+      {/* Newsletter */}
+      <Newsletter />
 
       {/* Footer */}
       <footer className="border-t border-border/70 py-10">
