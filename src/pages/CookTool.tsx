@@ -4,19 +4,19 @@ import {
   PANTRY_QUICK_PICKS,
   type IngredientCategory,
 } from "@/data/ingredients";
-import {
-  buildShareText,
-  findRecipes,
-  surpriseMe,
-  type ScoredRecipe,
-} from "@/lib/recipe-matcher";
-import { ingredientEmoji, ingredientLabel } from "@/data/recipes";
+import { findRecipes, surpriseMe, type ScoredRecipe } from "@/lib/recipe-matcher";
+import { ingredientEmoji, ingredientLabel, type Difficulty } from "@/data/recipes";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Brand } from "@/components/Brand";
+import { ConfettiBurst } from "@/components/confetti";
 import { FoodFactWidget } from "@/components/food-fact";
+import { InstallAppButton } from "@/components/install-app";
+import { ShareCardDialog } from "@/components/share-card";
+import { ShoppingListDialog } from "@/components/shopping-list";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useCookedRecipes } from "@/hooks/use-cooked-recipes";
 import { useSavedRecipes } from "@/hooks/use-saved-recipes";
 import { cn } from "@/lib/utils";
 import {
@@ -25,13 +25,15 @@ import {
   ChefHat,
   Clock,
   CookingPot,
-  Copy,
   ExternalLink,
   Heart,
   Lightbulb,
   RotateCcw,
   Search,
+  Share2,
   Shuffle,
+  ShoppingBasket,
+  SlidersHorizontal,
   Sparkles,
   Users,
   X,
@@ -78,13 +80,17 @@ function RecipeCard({
   surprise,
   index,
   saved,
+  cooked,
   onToggleSaved,
+  onToggleCooked,
 }: {
   item: ScoredRecipe;
   surprise: boolean;
   index: number;
   saved: boolean;
+  cooked: boolean;
   onToggleSaved: (id: string) => void;
+  onToggleCooked: (id: string) => void;
 }) {
   const { recipe, matched, missing } = item;
   return (
@@ -99,6 +105,8 @@ function RecipeCard({
         "rounded-2xl border bg-card p-5 shadow-sm transition-shadow sm:p-6",
         surprise &&
           "ring-2 ring-primary/70 shadow-lg shadow-primary/10 border-transparent",
+        cooked &&
+          "border-emerald-500/40 bg-emerald-50/50 dark:bg-emerald-500/5",
       )}
     >
       <div className="flex gap-4">
@@ -157,29 +165,63 @@ function RecipeCard({
             )}
           </div>
         </div>
-        <button
-          type="button"
-          onClick={() => onToggleSaved(recipe.id)}
-          aria-pressed={saved}
-          aria-label={
-            saved
-              ? `Remove ${recipe.name} from your saved list`
-              : `Save ${recipe.name} for later`
-          }
-          title={saved ? "Remove from saved" : "Save for later"}
-          className={cn(
-            "grid size-9 shrink-0 place-items-center self-start rounded-full border transition-all active:scale-90",
-            saved
-              ? "border-transparent bg-primary text-primary-foreground shadow-sm"
-              : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-primary",
-          )}
-        >
-          <Heart className={cn("size-4", saved && "fill-current")} />
-        </button>
+        <div className="flex shrink-0 flex-col items-center gap-1.5 self-start">
+          <button
+            type="button"
+            onClick={() => onToggleCooked(recipe.id)}
+            aria-pressed={cooked}
+            aria-label={
+              cooked
+                ? `Mark ${recipe.name} as not cooked`
+                : `Mark ${recipe.name} as cooked`
+            }
+            title={cooked ? "Cooked it! 🎉" : "Mark as cooked"}
+            className={cn(
+              "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-bold transition-all active:scale-90",
+              cooked
+                ? "border-emerald-500/40 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                : "border-border bg-card text-muted-foreground hover:border-emerald-500/40 hover:text-emerald-600",
+            )}
+          >
+            <Check className={cn("size-3", cooked && "fill-current")} />
+            {cooked ? "Cooked!" : "Cook it"}
+          </button>
+          <button
+            type="button"
+            onClick={() => onToggleSaved(recipe.id)}
+            aria-pressed={saved}
+            aria-label={
+              saved
+                ? `Remove ${recipe.name} from your saved list`
+                : `Save ${recipe.name} for later`
+            }
+            title={saved ? "Remove from saved" : "Save for later"}
+            className={cn(
+              "grid size-9 place-items-center rounded-full border transition-all active:scale-90",
+              saved
+                ? "border-transparent bg-primary text-primary-foreground shadow-sm"
+                : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-primary",
+            )}
+          >
+            <Heart className={cn("size-4", saved && "fill-current")} />
+          </button>
+        </div>
       </div>
     </motion.div>
   );
 }
+
+const TIME_FILTERS: { label: string; value: number | null }[] = [
+  { label: "Any time", value: null },
+  { label: "≤ 15 min", value: 15 },
+  { label: "≤ 30 min", value: 30 },
+];
+
+const DIFFICULTY_FILTERS: { label: string; value: Difficulty | null }[] = [
+  { label: "Any level", value: null },
+  { label: "Easy", value: "Easy" },
+  { label: "Medium", value: "Medium" },
+];
 
 export default function CookTool() {
   const [selected, setSelected] = useState<string[]>([]);
@@ -187,22 +229,53 @@ export default function CookTool() {
   const [surpriseId, setSurpriseId] = useState<string | null>(null);
   const [savedOnly, setSavedOnly] = useState(false);
   const [showFact, setShowFact] = useState(false);
+  const [maxTime, setMaxTime] = useState<number | null>(null);
+  const [difficulty, setDifficulty] = useState<Difficulty | null>(null);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [shoppingOpen, setShoppingOpen] = useState(false);
+  const [confettiKey, setConfettiKey] = useState(0);
   const resultsRef = useRef<HTMLDivElement>(null);
   const { saved, isSaved, toggleSaved } = useSavedRecipes();
+  const { cooked, isCooked, toggleCooked } = useCookedRecipes();
 
   const matches = useMemo(
     () => findRecipes(new Set(selected)),
     [selected],
   );
 
-  const visibleMatches = savedOnly
-    ? matches.filter((m) => saved.includes(m.recipe.id))
-    : matches;
+  const visibleMatches = useMemo(() => {
+    const filtered = matches.filter((m) => {
+      if (savedOnly && !saved.includes(m.recipe.id)) return false;
+      if (maxTime !== null && m.recipe.timeMinutes > maxTime) return false;
+      if (difficulty !== null && m.recipe.difficulty !== difficulty) return false;
+      return true;
+    });
+    return filtered;
+  }, [matches, savedOnly, maxTime, difficulty, saved]);
+
+  const activeFilterCount =
+    (maxTime !== null ? 1 : 0) + (difficulty !== null ? 1 : 0);
+
+  const clearFilters = () => {
+    setMaxTime(null);
+    setDifficulty(null);
+  };
+
+  const fireConfetti = () => setConfettiKey((k) => k + 1);
 
   const handleToggleSaved = (id: string) => {
     const wasSaved = isSaved(id);
     toggleSaved(id);
     if (!wasSaved) toast("Saved to your list — tap the heart to undo ❤️");
+  };
+
+  const handleToggleCooked = (id: string) => {
+    const wasCooked = isCooked(id);
+    toggleCooked(id);
+    if (!wasCooked) {
+      toast("Cooked it! Give yourself a chef high-five 🧑‍🍳");
+      fireConfetti();
+    }
   };
 
   const toggle = (id: string) => {
@@ -235,21 +308,7 @@ export default function CookTool() {
         ?.scrollIntoView({ behavior: "smooth", block: "center" });
     });
     window.setTimeout(() => setSurpriseId(null), 3500);
-  };
-
-  const handleCopy = async () => {
-    const text = buildShareText(matches, selected.map(ingredientLabel));
-    if (!text) {
-      toast("Pick a few ingredients first 🧺");
-      return;
-    }
-    try {
-      await navigator.clipboard.writeText(text);
-      toast("Your shortlist is copied — paste it in the group chat! 📋");
-    } catch {
-      toast("Copy isn't available in this browser, but here's your list:");
-      console.info(text);
-    }
+    fireConfetti();
   };
 
   const visibleIngredients =
@@ -270,6 +329,7 @@ export default function CookTool() {
             <Brand />
           </Link>
           <div className="flex items-center gap-2">
+            <InstallAppButton className="hidden md:inline-flex" />
             <ThemeToggle />
             <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
               <Link to="/">Home</Link>
@@ -477,6 +537,63 @@ export default function CookTool() {
               </button>
             </div>
 
+            {/* Filters: time + difficulty */}
+            <div className="mt-5 rounded-2xl border border-border bg-card/60 p-4">
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="mr-1 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    <Clock className="size-3.5" /> Time
+                  </span>
+                  {TIME_FILTERS.map((f) => (
+                    <button
+                      key={f.label}
+                      type="button"
+                      onClick={() => setMaxTime(f.value)}
+                      aria-pressed={maxTime === f.value}
+                      className={cn(
+                        "rounded-full border px-2.5 py-1 text-xs font-semibold transition-all active:scale-95",
+                        maxTime === f.value
+                          ? "border-transparent bg-primary text-primary-foreground"
+                          : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground",
+                      )}
+                    >
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="mr-1 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    <ChefHat className="size-3.5" /> Level
+                  </span>
+                  {DIFFICULTY_FILTERS.map((f) => (
+                    <button
+                      key={f.label}
+                      type="button"
+                      onClick={() => setDifficulty(f.value)}
+                      aria-pressed={difficulty === f.value}
+                      className={cn(
+                        "rounded-full border px-2.5 py-1 text-xs font-semibold transition-all active:scale-95",
+                        difficulty === f.value
+                          ? "border-transparent bg-primary text-primary-foreground"
+                          : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground",
+                      )}
+                    >
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
+                {activeFilterCount > 0 && (
+                  <button
+                    type="button"
+                    onClick={clearFilters}
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-primary transition-colors hover:text-primary/80"
+                  >
+                    <X className="size-3.5" /> Clear filters ({activeFilterCount})
+                  </button>
+                )}
+              </div>
+            </div>
+
             {/* Results banner */}
             <div className="relative mt-6 overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-primary to-[#8a3512] p-6 text-primary-foreground shadow-lg shadow-primary/20 sm:p-7">
               <div
@@ -491,20 +608,35 @@ export default function CookTool() {
               >
                 🥑
               </div>
-              {matches.length > 0 ? (
+              {matches.length > 0 && visibleMatches.length > 0 ? (
                 <>
                   <p className="text-xs font-semibold uppercase tracking-widest text-primary-foreground/70">
                     Made for your pantry
                   </p>
                   <p className="mt-1.5 text-2xl font-bold tracking-tight sm:text-3xl">
-                    {matches.length === 1
+                    {visibleMatches.length === 1
                       ? "1 idea worth cooking"
-                      : `${matches.length} ideas worth cooking`}
+                      : `${visibleMatches.length} ideas worth cooking`}
                   </p>
                   <p className="mt-1 text-sm text-primary-foreground/75">
-                    Using {selected.length}{" "}
-                    {selected.length === 1 ? "ingredient" : "ingredients"} you
-                    already have.
+                    {activeFilterCount > 0
+                      ? `${visibleMatches.length} match your filters`
+                      : `Using ${selected.length} ${
+                          selected.length === 1 ? "ingredient" : "ingredients"
+                        } you already have.`}
+                  </p>
+                </>
+              ) : matches.length > 0 ? (
+                <>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-primary-foreground/70">
+                    Too picky today?
+                  </p>
+                  <p className="mt-1.5 text-2xl font-bold tracking-tight sm:text-3xl">
+                    Loosen a filter to see picks
+                  </p>
+                  <p className="mt-1 text-sm text-primary-foreground/75">
+                    We found {matches.length} ideas overall — try a longer time
+                    limit or an easier level.
                   </p>
                 </>
               ) : (
@@ -534,10 +666,18 @@ export default function CookTool() {
                 <Button
                   variant="outline"
                   className="gap-2 border-primary-foreground/30 bg-transparent text-primary-foreground shadow-none hover:bg-primary-foreground/10 hover:text-primary-foreground"
-                  onClick={handleCopy}
-                  disabled={matches.length === 0}
+                  onClick={() => setShareOpen(true)}
+                  disabled={visibleMatches.length === 0}
                 >
-                  <Copy className="size-4" /> Copy my picks
+                  <Share2 className="size-4" /> Share my picks
+                </Button>
+                <Button
+                  variant="outline"
+                  className="gap-2 border-primary-foreground/30 bg-transparent text-primary-foreground shadow-none hover:bg-primary-foreground/10 hover:text-primary-foreground"
+                  onClick={() => setShoppingOpen(true)}
+                  disabled={visibleMatches.length === 0}
+                >
+                  <ShoppingBasket className="size-4" /> Shopping list
                 </Button>
               </div>
             </div>
@@ -552,10 +692,32 @@ export default function CookTool() {
                     index={index}
                     surprise={surpriseId === item.recipe.id}
                     saved={isSaved(item.recipe.id)}
+                    cooked={isCooked(item.recipe.id)}
                     onToggleSaved={handleToggleSaved}
+                    onToggleCooked={handleToggleCooked}
                   />
                 ))}
               </AnimatePresence>
+
+              {matches.length > 0 &&
+                visibleMatches.length === 0 &&
+                activeFilterCount > 0 && (
+                  <div className="rounded-2xl border border-dashed border-border bg-card/60 p-8 text-center">
+                    <p className="text-3xl">🔍</p>
+                    <h3 className="mt-2 font-bold">Nothing fits those filters</h3>
+                    <p className="mx-auto mt-1 max-w-xs text-sm leading-6 text-muted-foreground">
+                      Try a longer time limit or an easier level — or just
+                      widen back to everything.
+                    </p>
+                    <Button
+                      className="mt-4 gap-1.5"
+                      variant="outline"
+                      onClick={clearFilters}
+                    >
+                      <SlidersHorizontal className="size-4" /> Clear filters
+                    </Button>
+                  </div>
+                )}
 
               {savedOnly && visibleMatches.length === 0 && (
                 <div className="rounded-2xl border border-dashed border-border bg-card/60 p-8 text-center">
@@ -661,16 +823,40 @@ export default function CookTool() {
         <div className="fixed inset-x-4 bottom-4 z-40 lg:hidden">
           <div className="mx-auto flex max-w-md items-center justify-between gap-3 rounded-2xl border border-border bg-card/95 p-3 pl-5 shadow-lg backdrop-blur">
             <p className="text-sm font-semibold">
-              {matches.length === 1
+              {visibleMatches.length === 1
                 ? "1 idea for tonight"
-                : `${matches.length} ideas for tonight`}
+                : `${visibleMatches.length} ideas for tonight`}
             </p>
-            <Button size="sm" className="gap-1.5" onClick={scrollToResults}>
-              See them <ArrowDown className="size-4" />
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1.5"
+                onClick={() => setShoppingOpen(true)}
+              >
+                <ShoppingBasket className="size-4" />
+              </Button>
+              <Button size="sm" className="gap-1.5" onClick={scrollToResults}>
+                See them <ArrowDown className="size-4" />
+              </Button>
+            </div>
           </div>
         </div>
       )}
+
+      {/* Confetti + dialogs */}
+      {confettiKey > 0 && <ConfettiBurst key={confettiKey} />}
+      <ShareCardDialog
+        open={shareOpen}
+        onOpenChange={setShareOpen}
+        matches={visibleMatches}
+        selectedLabels={selected.map(ingredientLabel)}
+      />
+      <ShoppingListDialog
+        open={shoppingOpen}
+        onOpenChange={setShoppingOpen}
+        matches={visibleMatches}
+      />
     </div>
   );
 }

@@ -107,6 +107,14 @@ function RouteSyncer() {
 }
 
 
+// Register the service worker for PWA installability + offline support.
+// Guarded so it never interferes with dev/HMR.
+if (import.meta.env.PROD && "serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  });
+}
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <RootErrorBoundary>

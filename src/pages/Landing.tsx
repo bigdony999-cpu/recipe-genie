@@ -1,7 +1,9 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Brand } from "@/components/Brand";
+import { EbookSection } from "@/components/ebook-section";
 import { FoodFactWidget } from "@/components/food-fact";
+import { InstallAppButton } from "@/components/install-app";
 import { SubscribeForm } from "@/components/subscribe-form";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { INGREDIENT_BY_ID } from "@/data/ingredients";
@@ -400,7 +402,10 @@ function FunFacts() {
 /* ------------------------------------------------------------------ */
 function Newsletter() {
   return (
-    <section className="border-t border-border/70 bg-secondary/30 py-20 sm:py-24">
+    <section
+      id="newsletter"
+      className="scroll-mt-20 border-t border-border/70 bg-secondary/30 py-20 sm:py-24"
+    >
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
         <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-semibold uppercase tracking-widest text-primary">
@@ -443,6 +448,7 @@ export default function Landing() {
             </a>
           </nav>
           <div className="flex items-center gap-2">
+            <InstallAppButton className="hidden md:inline-flex" />
             <ThemeToggle />
             <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
               <Link to="/auth">Sign in</Link>
@@ -533,6 +539,9 @@ export default function Landing() {
 
       {/* Fun facts */}
       <FunFacts />
+
+      {/* Ebook — the paid product */}
+      <EbookSection />
 
       {/* CTA */}
       <section className="py-20 sm:py-28">
