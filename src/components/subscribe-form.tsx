@@ -13,10 +13,10 @@ type Notice =
   | { tone: "error"; text: string }
   | { tone: "info"; text: string };
 
-/** Email capture for the recipe newsletter — stored in Convex, synced to Buttondown. */
+/** Email capture for the recipe newsletter — stored in Convex, welcome email via Resend. */
 export function SubscribeForm({ className }: { className?: string }) {
   const subscribe = useMutation(api.subscribers.subscribe);
-  const syncSubscriber = useAction(api.buttondown.syncSubscriber);
+  const sendWelcomeEmail = useAction(api.resend.sendWelcomeEmail);
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [notice, setNotice] = useState<Notice | null>(null);
@@ -48,8 +48,8 @@ export function SubscribeForm({ className }: { className?: string }) {
           text: "You're in! Watch your inbox for fresh recipe ideas. 🥘",
         });
         setEmail("");
-        // Fire-and-forget sync to the newsletter provider; never blocks signup.
-        syncSubscriber({ email: value }).catch(() => {});
+        // Fire-and-forget welcome email via Resend; never blocks signup.
+        sendWelcomeEmail({ email: value }).catch(() => {});
       }
     } catch {
       setNotice({
