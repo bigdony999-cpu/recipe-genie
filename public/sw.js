@@ -5,10 +5,18 @@
 const CACHE = "wsc-v1";
 
 self.addEventListener("install", (event) => {
+  // Best-effort pre-cache: if one asset fails (e.g. first visit offline) the
+  // install still succeeds, so the SW activates and runtime caching works.
   event.waitUntil(
     caches
       .open(CACHE)
-      .then((cache) => cache.addAll(["/", "/manifest.webmanifest", "/logo.svg"]))
+      .then((cache) =>
+        Promise.allSettled(
+          ["/", "/manifest.webmanifest", "/logo.svg"].map((url) =>
+            cache.add(url),
+          ),
+        ),
+      )
       .then(() => self.skipWaiting()),
   );
 });

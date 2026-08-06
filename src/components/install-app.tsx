@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Download, Smartphone } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 interface BeforeInstallPromptEvent extends Event {
@@ -47,12 +48,18 @@ export function InstallAppButton({ className }: { className?: string }) {
     setPromptEvent(null);
   };
 
+  const handleIosHint = () => {
+    toast(
+      "In Safari, tap the Share button (□↑), scroll down, then “Add to Home Screen” 📱",
+    );
+  };
+
   return (
     <Button
       variant="outline"
       size="sm"
       className={cn("gap-1.5", className)}
-      onClick={showIosHint ? undefined : handleInstall}
+      onClick={showIosHint ? handleIosHint : handleInstall}
       title={
         showIosHint
           ? "Tap the Share button in Safari, then “Add to Home Screen”"

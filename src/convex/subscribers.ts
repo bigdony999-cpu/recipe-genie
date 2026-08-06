@@ -3,8 +3,8 @@ import { v } from "convex/values";
 
 /**
  * Newsletter signup. Dedupes by email and stores the subscriber in the
- * Convex `subscribers` table. The optional Buttondown sync is fired from
- * the client (see buttondown.ts) so a slow or missing API key never blocks
+ * Convex `subscribers` table. The welcome email is fired from the client
+ * via the resend action (see resend.ts) so a missing API key never blocks
  * the signup itself.
  */
 export const subscribe = mutation({

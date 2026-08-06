@@ -82,7 +82,7 @@ export function AiChefDialog({
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Fresh chat every time the dialog opens.
@@ -94,10 +94,10 @@ export function AiChefDialog({
     }
   }, [open]);
 
-  // Keep the newest message in view.
+  // Keep the newest message in view. scrollIntoView scrolls whichever
+  // ancestor is actually scrollable (the ScrollArea viewport).
   useEffect(() => {
-    const el = scrollRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
+    bottomRef.current?.scrollIntoView({ block: "end" });
   }, [messages, loading]);
 
   const send = async (raw?: string) => {
@@ -222,7 +222,7 @@ export function AiChefDialog({
 
           {/* Messages */}
           <ScrollArea className="flex-1">
-            <div ref={scrollRef} className="h-full space-y-4 px-4 py-5">
+            <div className="h-full space-y-4 px-4 py-5">
               {messages.length === 0 && (
                 <div className="rounded-2xl border border-border/70 bg-card p-4">
                   <p className="text-sm font-bold">Hi, I&apos;m Chef AI! 👋</p>
@@ -262,6 +262,9 @@ export function AiChefDialog({
                   </div>
                 </div>
               )}
+
+              {/* Sentinel for auto-scroll */}
+              <div ref={bottomRef} aria-hidden />
             </div>
           </ScrollArea>
 

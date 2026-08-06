@@ -1,4 +1,6 @@
+import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { Link } from "react-router";
 
 export default function NotFound() {
   return (
@@ -6,17 +8,25 @@ export default function NotFound() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen flex flex-col"
+      className="flex min-h-screen flex-col bg-background text-foreground"
     >
-
-      
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center">
-        <div className="max-w-5xl mx-auto relative px-4">
-          <div className="flex items-center justify-center min-h-[200px]">
+      <div className="flex flex-1 items-center justify-center">
+        <div className="mx-auto max-w-5xl px-4">
+          <div className="flex min-h-[200px] items-center justify-center">
             <div className="text-center">
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
-              <p className="text-lg text-gray-600">Page Not Found</p>
+              <p className="text-7xl font-extrabold tracking-tight text-primary">
+                404
+              </p>
+              <p className="mt-3 text-lg font-semibold text-muted-foreground">
+                Page not found
+              </p>
+              <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground/80">
+                That page has gone off the menu — but there&apos;s still a
+                dinner to decide.
+              </p>
+              <Button asChild className="mt-6">
+                <Link to="/cook">Find me a recipe</Link>
+              </Button>
             </div>
           </div>
         </div>

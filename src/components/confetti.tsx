@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const COLORS = [
   "#e2542a",
@@ -33,6 +33,15 @@ const EMOJI = ["🍳", "🥘", "✨", "🎉", "🍝", "🧑‍🍳"];
  * the center of the screen and then unmounts itself.
  */
 export function ConfettiBurst() {
+  const [gone, setGone] = useState(false);
+
+  // Unmount ourselves once the longest piece finishes animating, so the
+  // fixed overlay doesn't linger in the DOM after the burst.
+  useEffect(() => {
+    const timer = window.setTimeout(() => setGone(true), 4200);
+    return () => window.clearTimeout(timer);
+  }, []);
+
   const pieces = useMemo<Piece[]>(() => {
     const count = 42;
     return Array.from({ length: count }, (_, i) => {
@@ -53,6 +62,8 @@ export function ConfettiBurst() {
       };
     });
   }, []);
+
+  if (gone) return null;
 
   return (
     <div
