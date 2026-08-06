@@ -189,7 +189,11 @@ export function EbookSection() {
                 size="lg"
                 className="h-12 gap-2 rounded-xl px-6 text-base"
               >
-                <a href="#newsletter">
+                <a
+                  href="https://greenspot.gumroad.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <Download className="size-5" /> Get the ebook
                 </a>
               </Button>
