@@ -84,13 +84,10 @@ function BookCover() {
         {/* Floating badge: price */}
         <div className="absolute -right-7 top-6 rotate-6 rounded-2xl border border-amber-200/60 bg-white px-4 py-2 text-center shadow-xl transition-transform duration-500 group-hover:-rotate-3">
           <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-            Launch price
+            Instant download
           </p>
           <p className="text-xl font-black text-primary">
-            $4.99
-            <span className="ml-1 text-xs font-semibold text-muted-foreground line-through">
-              $12.99
-            </span>
+            $6.99
           </p>
         </div>
 
