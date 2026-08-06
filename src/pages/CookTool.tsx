@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Brand } from "@/components/Brand";
+import { FoodFactWidget } from "@/components/food-fact";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useSavedRecipes } from "@/hooks/use-saved-recipes";
 import { cn } from "@/lib/utils";
@@ -27,11 +28,13 @@ import {
   Copy,
   ExternalLink,
   Heart,
+  Lightbulb,
   RotateCcw,
   Search,
   Shuffle,
   Sparkles,
   Users,
+  X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useMemo, useRef, useState } from "react";
@@ -183,6 +186,7 @@ export default function CookTool() {
   const [query, setQuery] = useState("");
   const [surpriseId, setSurpriseId] = useState<string | null>(null);
   const [savedOnly, setSavedOnly] = useState(false);
+  const [showFact, setShowFact] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
   const { saved, isSaved, toggleSaved } = useSavedRecipes();
 
@@ -619,6 +623,34 @@ export default function CookTool() {
                   </Button>
                 </div>
               )}
+
+              {/* Fun fact */}
+              <div className="pt-2">
+                {showFact ? (
+                  <div className="relative">
+                    <FoodFactWidget />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => setShowFact(false)}
+                      aria-label="Close food fact"
+                      className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="size-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setShowFact(true)}
+                    className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-card/60 px-4 py-4 text-sm font-semibold text-muted-foreground transition-all hover:border-primary/40 hover:text-foreground active:scale-[0.99]"
+                  >
+                    <Lightbulb className="size-4 text-primary" />
+                    Food fact — did you know?
+                  </button>
+                )}
+              </div>
             </div>
           </section>
         </div>

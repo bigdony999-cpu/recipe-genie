@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Brand } from "@/components/Brand";
+import { FoodFactWidget } from "@/components/food-fact";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { INGREDIENT_BY_ID } from "@/data/ingredients";
 import { findRecipes } from "@/lib/recipe-matcher";
@@ -347,6 +348,53 @@ function HowItWorks() {
 }
 
 /* ------------------------------------------------------------------ */
+/* Fun facts                                                           */
+/* ------------------------------------------------------------------ */
+function FunFacts() {
+  return (
+    <section className="py-20 sm:py-28">
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
+        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
+          <motion.div {...fadeUp}>
+            <p className="text-sm font-semibold uppercase tracking-widest text-primary">
+              Break time
+            </p>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+              Food facts to impress your flatmates
+            </h2>
+            <p className="mt-3 max-w-md text-sm leading-6 text-muted-foreground sm:text-base">
+              Stuck on the couch while dinner cooks? Hit the button and grab a
+              bite-sized fact about food, fruit and drinks. Then copy it
+              straight into the group chat.
+            </p>
+            <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
+              <li className="flex items-start gap-2.5">
+                <span aria-hidden>🍅</span>
+                Food, fruit, veg, drinks, history and science
+              </li>
+              <li className="flex items-start gap-2.5">
+                <span aria-hidden>🔁</span>
+                A new fact every click — plus a fresh fact of the day
+              </li>
+              <li className="flex items-start gap-2.5">
+                <span aria-hidden>📋</span>
+                One tap to copy and share with your friends
+              </li>
+            </ul>
+          </motion.div>
+          <motion.div
+            {...fadeUp}
+            transition={{ duration: 0.55, delay: 0.1, ease: "easeOut" }}
+          >
+            <FoodFactWidget />
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /* Page                                                                */
 /* ------------------------------------------------------------------ */
 export default function Landing() {
@@ -452,6 +500,9 @@ export default function Landing() {
       <div id="features">
         <FeatureGrid />
       </div>
+
+      {/* Fun facts */}
+      <FunFacts />
 
       {/* CTA */}
       <section className="py-20 sm:py-28">
