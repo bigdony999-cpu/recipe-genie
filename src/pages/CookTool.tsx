@@ -6,6 +6,7 @@ import {
 } from "@/data/ingredients";
 import { findRecipes, surpriseMe, type ScoredRecipe } from "@/lib/recipe-matcher";
 import { ingredientEmoji, ingredientLabel, type Difficulty } from "@/data/recipes";
+import { AiChefDialog } from "@/components/ai-chef";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -233,6 +234,7 @@ export default function CookTool() {
   const [difficulty, setDifficulty] = useState<Difficulty | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
   const [shoppingOpen, setShoppingOpen] = useState(false);
+  const [chefOpen, setChefOpen] = useState(false);
   const [confettiKey, setConfettiKey] = useState(0);
   const resultsRef = useRef<HTMLDivElement>(null);
   const { saved, isSaved, toggleSaved } = useSavedRecipes();
@@ -856,6 +858,14 @@ export default function CookTool() {
         open={shoppingOpen}
         onOpenChange={setShoppingOpen}
         matches={visibleMatches}
+      />
+
+      {/* Floating AI chef — knows what's in your pantry */}
+      <AiChefDialog
+        open={chefOpen}
+        onOpenChange={setChefOpen}
+        ingredients={selected.map(ingredientLabel)}
+        floatingButtonClassName="bottom-24 lg:bottom-5"
       />
     </div>
   );

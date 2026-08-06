@@ -1,3 +1,4 @@
+import { AiChefDialog } from "@/components/ai-chef";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Brand } from "@/components/Brand";
@@ -18,8 +19,10 @@ import {
   CookingPot,
   Copy,
   Dice5,
+  MessageCircle,
   Share2,
   Sparkles,
+  UtensilsCrossed,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
@@ -398,6 +401,118 @@ function FunFacts() {
 }
 
 /* ------------------------------------------------------------------ */
+/* AI Chef section                                                     */
+/* ------------------------------------------------------------------ */
+const CHEF_QA = [
+  {
+    q: "I have eggs, rice & a tomato…",
+    a: "Shakshuka, egg fried rice, or a quick tomato rice bowl — instantly.",
+  },
+  {
+    q: "What pairs with pasta night?",
+    a: "Drink ideas, side dishes, even a fun fact about the dish. Ask away.",
+  },
+  {
+    q: "No butter? No problem.",
+    a: "Chef AI suggests swaps for whatever ingredient you're missing.",
+  },
+];
+
+function AiChefSection({ onAsk }: { onAsk: () => void }) {
+  return (
+    <section className="border-t border-border/70 bg-secondary/30 py-20 sm:py-28">
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+          <motion.div {...fadeUp}>
+            <Badge className="rounded-full bg-primary/10 px-3 py-1 text-primary shadow-none hover:bg-primary/10">
+              ✨ New · AI-powered
+            </Badge>
+            <h2 className="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1]">
+              Stuck? Ask{" "}
+              <span className="text-primary">Chef AI</span> — your pocket
+              cooking buddy
+            </h2>
+            <p className="mt-4 max-w-lg text-base leading-7 text-muted-foreground">
+              Food, drinks, substitutions, facts — ask anything and get a
+              friendly, practical answer in seconds. It even knows what&apos;s
+              already in your kitchen.
+            </p>
+
+            <div className="mt-7 space-y-3">
+              {CHEF_QA.map((item) => (
+                <div
+                  key={item.q}
+                  className="rounded-2xl border border-border bg-card p-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+                >
+                  <p className="text-sm font-bold tracking-tight">
+                    💬 {item.q}
+                  </p>
+                  <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                    {item.a}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <Button
+              size="lg"
+              className="mt-7 h-12 gap-2 rounded-xl px-6 text-base"
+              onClick={onAsk}
+            >
+              <MessageCircle className="size-5" /> Ask Chef AI anything
+            </Button>
+          </motion.div>
+
+          {/* Chat preview card */}
+          <motion.div {...fadeUp} className="relative">
+            <div className="rounded-3xl border border-border bg-card p-5 shadow-xl shadow-primary/10 sm:p-6">
+              <div className="flex items-center gap-3">
+                <span className="grid size-11 place-items-center rounded-2xl bg-primary/10 text-2xl">
+                  👨‍🍳
+                </span>
+                <div>
+                  <p className="text-sm font-bold">Chef AI</p>
+                  <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <span className="size-1.5 rounded-full bg-emerald-500" />
+                    Online · replies instantly
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 space-y-3">
+                <div className="max-w-[85%] rounded-2xl rounded-bl-md border border-border/70 bg-background px-4 py-2.5 text-sm">
+                  I have chicken, rice and broccoli. Quick idea?
+                </div>
+                <div className="ml-auto max-w-[88%] rounded-2xl rounded-br-md bg-primary px-4 py-2.5 text-sm text-primary-foreground">
+                  <p>
+                    <strong>Chicken &amp; Broccoli Stir-Fry</strong> — 20 min
+                  </p>
+                  <p className="mt-1 opacity-90">
+                    Veggie rice bowls, or a one-pan teriyaki bake. Want a
+                    drink pairing too? 🍵
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 pt-1">
+                  <div className="h-11 flex-1 rounded-xl border border-border bg-background px-3.5 text-sm text-muted-foreground">
+                    Ask about food or drinks…
+                  </div>
+                  <span className="grid size-11 place-items-center rounded-xl bg-primary text-primary-foreground">
+                    <UtensilsCrossed className="size-4" />
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -right-5 -top-5 -z-10 size-40 rounded-full bg-primary/10 blur-2xl"
+            />
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /* Newsletter                                                          */
 /* ------------------------------------------------------------------ */
 function Newsletter() {
@@ -433,6 +548,8 @@ function Newsletter() {
 /* Page                                                                */
 /* ------------------------------------------------------------------ */
 export default function Landing() {
+  const [chefOpen, setChefOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Nav */}
@@ -540,6 +657,9 @@ export default function Landing() {
       {/* Fun facts */}
       <FunFacts />
 
+      {/* AI Chef */}
+      <AiChefSection onAsk={() => setChefOpen(true)} />
+
       {/* Ebook — the paid product */}
       <EbookSection />
 
@@ -585,6 +705,9 @@ export default function Landing() {
 
       {/* Newsletter */}
       <Newsletter />
+
+      {/* Floating AI chef */}
+      <AiChefDialog open={chefOpen} onOpenChange={setChefOpen} />
 
       {/* Footer */}
       <footer className="border-t border-border/70 py-10">
