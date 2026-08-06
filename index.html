@@ -12,6 +12,18 @@
   />
   <meta name="theme-color" content="#c2542a" />
   <title>What Should I Cook? — Dinner ideas from what you already have</title>
+  <script>
+    // Apply the saved theme before first paint to avoid a flash.
+    try {
+      var t = localStorage.getItem("wsc.theme");
+      if (
+        t === "dark" ||
+        (!t && window.matchMedia("(prefers-color-scheme: dark)").matches)
+      ) {
+        document.documentElement.classList.add("dark");
+      }
+    } catch (e) {}
+  </script>
 </head>
 
 

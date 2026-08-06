@@ -15,6 +15,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Brand } from "@/components/Brand";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { useSavedRecipes } from "@/hooks/use-saved-recipes";
 import { cn } from "@/lib/utils";
 import {
   ArrowDown,
@@ -24,6 +26,7 @@ import {
   CookingPot,
   Copy,
   ExternalLink,
+  Heart,
   RotateCcw,
   Search,
   Shuffle,
@@ -71,10 +74,14 @@ function RecipeCard({
   item,
   surprise,
   index,
+  saved,
+  onToggleSaved,
 }: {
   item: ScoredRecipe;
   surprise: boolean;
   index: number;
+  saved: boolean;
+  onToggleSaved: (id: string) => void;
 }) {
   const { recipe, matched, missing } = item;
   return (
@@ -147,6 +154,25 @@ function RecipeCard({
             )}
           </div>
         </div>
+        <button
+          type="button"
+          onClick={() => onToggleSaved(recipe.id)}
+          aria-pressed={saved}
+          aria-label={
+            saved
+              ? `Remove ${recipe.name} from your saved list`
+              : `Save ${recipe.name} for later`
+          }
+          title={saved ? "Remove from saved" : "Save for later"}
+          className={cn(
+            "grid size-9 shrink-0 place-items-center self-start rounded-full border transition-all active:scale-90",
+            saved
+              ? "border-transparent bg-primary text-primary-foreground shadow-sm"
+              : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-primary",
+          )}
+        >
+          <Heart className={cn("size-4", saved && "fill-current")} />
+        </button>
       </div>
     </motion.div>
   );
@@ -156,12 +182,24 @@ export default function CookTool() {
   const [selected, setSelected] = useState<string[]>([]);
   const [query, setQuery] = useState("");
   const [surpriseId, setSurpriseId] = useState<string | null>(null);
+  const [savedOnly, setSavedOnly] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
+  const { saved, isSaved, toggleSaved } = useSavedRecipes();
 
   const matches = useMemo(
     () => findRecipes(new Set(selected)),
     [selected],
   );
+
+  const visibleMatches = savedOnly
+    ? matches.filter((m) => saved.includes(m.recipe.id))
+    : matches;
+
+  const handleToggleSaved = (id: string) => {
+    const wasSaved = isSaved(id);
+    toggleSaved(id);
+    if (!wasSaved) toast("Saved to your list — tap the heart to undo ❤️");
+  };
 
   const toggle = (id: string) => {
     setSelected((prev) =>
@@ -228,6 +266,7 @@ export default function CookTool() {
             <Brand />
           </Link>
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
               <Link to="/">Home</Link>
             </Button>
@@ -391,6 +430,49 @@ export default function CookTool() {
               Tonight&apos;s shortlist
             </h2>
 
+            {/* Saved / all filter */}
+            <div className="mt-5 inline-flex items-center gap-1 rounded-full border border-border bg-card p-1 shadow-sm">
+              <button
+                type="button"
+                onClick={() => setSavedOnly(false)}
+                aria-pressed={!savedOnly}
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-semibold transition-all",
+                  !savedOnly
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                All picks
+              </button>
+              <button
+                type="button"
+                onClick={() => setSavedOnly(true)}
+                aria-pressed={savedOnly}
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-semibold transition-all",
+                  savedOnly
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                <Heart className={cn("size-3.5", savedOnly && "fill-current")} />
+                Saved
+                {saved.length > 0 && (
+                  <span
+                    className={cn(
+                      "rounded-full px-1.5 py-0.5 text-[11px] leading-none",
+                      savedOnly
+                        ? "bg-primary-foreground/20 text-primary-foreground"
+                        : "bg-primary/10 text-primary",
+                    )}
+                  >
+                    {saved.length}
+                  </span>
+                )}
+              </button>
+            </div>
+
             {/* Results banner */}
             <div className="relative mt-6 overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-primary to-[#8a3512] p-6 text-primary-foreground shadow-lg shadow-primary/20 sm:p-7">
               <div
@@ -459,15 +541,40 @@ export default function CookTool() {
             {/* Recipe list */}
             <div className="mt-5 space-y-4">
               <AnimatePresence mode="popLayout">
-                {matches.map((item, index) => (
+                {visibleMatches.map((item, index) => (
                   <RecipeCard
                     key={item.recipe.id}
                     item={item}
                     index={index}
                     surprise={surpriseId === item.recipe.id}
+                    saved={isSaved(item.recipe.id)}
+                    onToggleSaved={handleToggleSaved}
                   />
                 ))}
               </AnimatePresence>
+
+              {savedOnly && visibleMatches.length === 0 && (
+                <div className="rounded-2xl border border-dashed border-border bg-card/60 p-8 text-center">
+                  <p className="text-3xl">💗</p>
+                  <h3 className="mt-2 font-bold">
+                    {saved.length === 0
+                      ? "Nothing saved yet"
+                      : "No saved recipes in these picks"}
+                  </h3>
+                  <p className="mx-auto mt-1 max-w-xs text-sm leading-6 text-muted-foreground">
+                    {saved.length === 0
+                      ? "Tap the heart on any recipe to keep it here — your list is saved on this device."
+                      : "None of these matches are bookmarked. Tap the heart on a recipe to save it, or flip back to all picks."}
+                  </p>
+                  <Button
+                    className="mt-4 gap-1.5"
+                    variant="outline"
+                    onClick={() => setSavedOnly(false)}
+                  >
+                    <Heart className="size-4" /> Show all picks
+                  </Button>
+                </div>
+              )}
 
               {selected.length > 0 && matches.length === 0 && (
                 <div className="rounded-2xl border border-dashed border-border bg-card/60 p-8 text-center">

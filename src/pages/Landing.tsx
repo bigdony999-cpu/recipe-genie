@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Brand } from "@/components/Brand";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { INGREDIENT_BY_ID } from "@/data/ingredients";
 import { findRecipes } from "@/lib/recipe-matcher";
 import { ingredientLabel } from "@/data/recipes";
@@ -364,6 +365,7 @@ export default function Landing() {
             </a>
           </nav>
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
               <Link to="/auth">Sign in</Link>
             </Button>
