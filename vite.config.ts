@@ -92,9 +92,9 @@ export default defineConfig({
     // Bind to all interfaces so WebContainer's server-ready event fires.
     host: true,
     port: 5173,
-    // Keep HMR on, but disable full-screen error overlay
-    hmr: {
-      overlay: false,
-    },
+    // Freebuff requires HMR to remain disabled — the preview proxy does not
+    // forward the HMR websocket, and enabling it causes "Failed to fetch
+    // dynamically imported module" errors after the dev server restarts.
+    hmr: false,
   },
 });

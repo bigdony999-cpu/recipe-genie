@@ -87,6 +87,13 @@ class RootErrorBoundary extends React.Component<
                 {this.state.stack}
               </pre>
             )}
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="mt-4 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-transform hover:scale-105 active:scale-95"
+            >
+              Reload preview
+            </button>
           </div>
         </div>
       );
