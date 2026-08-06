@@ -61,12 +61,12 @@ function BookCover() {
               The 10-minute series
             </p>
             <h3 className="mt-3 text-3xl font-black leading-[1.1] tracking-tight text-white sm:text-[2.15rem]">
-              Student
+              Everyday
               <br />
               Cookbook
             </h3>
             <p className="mt-2 text-sm font-medium text-amber-100/90">
-              60+ cheap, delicious recipes for busy people
+              60+ easy, delicious recipes for busy people
             </p>
 
             <div className="mt-5 flex items-center gap-2 text-amber-200">
@@ -110,22 +110,22 @@ const PERKS = [
   {
     icon: UtensilsCrossed,
     title: "Dinner, decided",
-    text: "Every recipe uses 5–8 ingredients you can actually buy on a student budget.",
+    text: "Every recipe uses 5–8 everyday ingredients you can buy anywhere, on any budget.",
   },
   {
     icon: Sparkles,
     title: "Cooked in under 30 min",
-    text: "From pantry to plate before your lecture's next Zoom starts.",
+    text: "From pantry to plate in about the time it takes to scroll for takeout.",
   },
   {
     icon: BookOpen,
-    title: "Learn the methods",
-    text: "A short kitchen-skills crash course so you can improvise any dish.",
+    title: "Skills that stick",
+    text: "A short kitchen crash course so you can improvise any dish — not just follow one.",
   },
   {
     icon: ShieldCheck,
     title: "No wasted food",
-    text: "Each chapter pairs recipes to the same shopping list — use everything up.",
+    text: "Smart pairings share one shopping list — use everything up, throw nothing away.",
   },
 ];
 
@@ -152,16 +152,29 @@ export function EbookSection() {
               📖 Now available
             </Badge>
             <h2 className="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1]">
-              The Student Cookbook —{" "}
+              The Everyday Cookbook —{" "}
               <span className="text-primary">every recipe you&apos;ll ever need</span>{" "}
               in one book
             </h2>
             <p className="mt-4 max-w-lg text-base leading-7 text-muted-foreground">
-              You know that feeling: it&apos;s 7pm, you&apos;re hungry, and the
-              fridge has &ldquo;nothing&rdquo;. This ebook turns that fridge into
-              60+ real dinners — written for students, by people who actually ate
-              like students.
+              That 7pm feeling is universal: you&apos;re hungry and the fridge
+              has &ldquo;nothing&rdquo;. Whether you&apos;re a student, a busy
+              parent, a first-time cook, or just someone tired of deciding — this
+              ebook turns whatever&apos;s in your kitchen into 60+ real dinners.
             </p>
+
+            <div className="mt-5 flex flex-wrap gap-2">
+              {["🎓 Students", "👨‍👩‍👧 Busy parents", "🧑‍🍳 First-time cooks", "⏰ Time-poor professionals"].map(
+                (audience) => (
+                  <span
+                    key={audience}
+                    className="rounded-full border border-border bg-card px-3 py-1 text-xs font-semibold text-muted-foreground"
+                  >
+                    {audience}
+                  </span>
+                ),
+              )}
+            </div>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               {PERKS.map((perk) => (
@@ -203,7 +216,7 @@ export function EbookSection() {
             <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-1.5">
                 <Star className="size-4 fill-amber-400 text-amber-400" />
-                4.9/5 from 2,000+ students
+                4.9/5 from 2,000+ happy cooks
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <Download className="size-4" /> Instant delivery
