@@ -1,43 +1,24 @@
-import '@vly-ai/integrations';
+import "@vly-ai/integrations";
 import { Toaster } from "@/components/ui/sonner";
 import { VlyToolbar } from "../vly-toolbar-readonly.tsx";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { ConvexReactClient } from "convex/react";
-import React, { StrictMode, useEffect, lazy, Suspense } from "react";
+import React, { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router";
 import "./index.css";
+import Landing from "./pages/Landing.tsx";
+import AuthPage from "./pages/Auth.tsx";
+import CookTool from "./pages/CookTool.tsx";
+import NotFound from "./pages/NotFound.tsx";
 
-/**
- * Retry a dynamic import a few times before giving up. The dev/preview
- * server occasionally restarts (e.g. right after files are saved), and a
- * lazy route fetched in that window fails with "Failed to fetch dynamically
- * imported module". Retrying lets the page recover without a manual reload.
+/*
+ * Routes are statically imported (no React.lazy). This app is small enough
+ * that code-splitting saves nothing, and static imports eliminate the
+ * "Failed to fetch dynamically imported module" class of errors entirely —
+ * every page ships in the initial bundle, so the preview proxy never has to
+ * fetch a route module mid-session.
  */
-function retryImport<T>(factory: () => Promise<T>, retries = 4, delay = 700): Promise<T> {
-  return factory().catch((error) => {
-    if (retries <= 0) throw error;
-    console.warn("[route] dynamic import failed — retrying…", error);
-    return new Promise<T>((resolve) => window.setTimeout(resolve, delay)).then(() =>
-      retryImport(factory, retries - 1, delay),
-    );
-  });
-}
-
-// Lazy load route components for better code splitting (with retry)
-const Landing = lazy(() => retryImport(() => import("./pages/Landing.tsx")));
-const AuthPage = lazy(() => retryImport(() => import("./pages/Auth.tsx")));
-const CookTool = lazy(() => retryImport(() => import("./pages/CookTool.tsx")));
-const NotFound = lazy(() => retryImport(() => import("./pages/NotFound.tsx")));
-
-// Simple loading fallback for route transitions
-function RouteLoading() {
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="animate-pulse text-muted-foreground">Loading...</div>
-    </div>
-  );
-}
 
 /** Silent error boundary — if VlyToolbar crashes it renders nothing instead of
  *  crashing the whole app (e.g. hook errors in WebContainer environment). */
@@ -104,8 +85,6 @@ class RootErrorBoundary extends React.Component<
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
-
-
 function RouteSyncer() {
   const location = useLocation();
   useEffect(() => {
@@ -129,7 +108,6 @@ function RouteSyncer() {
   return null;
 }
 
-
 // Register the service worker for PWA installability + offline support.
 // Guarded so it never interferes with dev/HMR.
 if (import.meta.env.PROD && "serviceWorker" in navigator) {
@@ -147,17 +125,15 @@ createRoot(document.getElementById("root")!).render(
       <ConvexAuthProvider client={convex}>
         <BrowserRouter>
           <RouteSyncer />
-          <Suspense fallback={<RouteLoading />}>
-            <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="/cook" element={<CookTool />} />
-              <Route
-                path="/auth"
-                element={<AuthPage redirectAfterAuth="/cook" />}
-              />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/cook" element={<CookTool />} />
+            <Route
+              path="/auth"
+              element={<AuthPage redirectAfterAuth="/cook" />}
+            />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
         </BrowserRouter>
         <Toaster />
       </ConvexAuthProvider>
