@@ -8,11 +8,27 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router";
 import "./index.css";
 
-// Lazy load route components for better code splitting
-const Landing = lazy(() => import("./pages/Landing.tsx"));
-const AuthPage = lazy(() => import("./pages/Auth.tsx"));
-const CookTool = lazy(() => import("./pages/CookTool.tsx"));
-const NotFound = lazy(() => import("./pages/NotFound.tsx"));
+/**
+ * Retry a dynamic import a few times before giving up. The dev/preview
+ * server occasionally restarts (e.g. right after files are saved), and a
+ * lazy route fetched in that window fails with "Failed to fetch dynamically
+ * imported module". Retrying lets the page recover without a manual reload.
+ */
+function retryImport<T>(factory: () => Promise<T>, retries = 4, delay = 700): Promise<T> {
+  return factory().catch((error) => {
+    if (retries <= 0) throw error;
+    console.warn("[route] dynamic import failed — retrying…", error);
+    return new Promise<T>((resolve) => window.setTimeout(resolve, delay)).then(() =>
+      retryImport(factory, retries - 1, delay),
+    );
+  });
+}
+
+// Lazy load route components for better code splitting (with retry)
+const Landing = lazy(() => retryImport(() => import("./pages/Landing.tsx")));
+const AuthPage = lazy(() => retryImport(() => import("./pages/Auth.tsx")));
+const CookTool = lazy(() => retryImport(() => import("./pages/CookTool.tsx")));
+const NotFound = lazy(() => retryImport(() => import("./pages/NotFound.tsx")));
 
 // Simple loading fallback for route transitions
 function RouteLoading() {
