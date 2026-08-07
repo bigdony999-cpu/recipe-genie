@@ -5,6 +5,7 @@ import { useAction, useMutation } from "convex/react";
 import { CheckCircle2, Loader2, Mail, Send } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { trackEvent } from "@/lib/analytics";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -58,6 +59,7 @@ export function SubscribeForm({ className }: { className?: string }) {
           text: "You're in! Watch your inbox for fresh recipe ideas. 🥘",
         });
         setEmail("");
+        trackEvent("Newsletter Signup");
         // Fire-and-forget welcome email via Resend; never blocks signup.
         sendWelcomeEmail({ email: value }).catch(() => {});
       }

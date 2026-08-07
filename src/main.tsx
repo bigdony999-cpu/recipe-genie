@@ -11,6 +11,7 @@ import Landing from "./pages/Landing.tsx";
 import AuthPage from "./pages/Auth.tsx";
 import CookTool from "./pages/CookTool.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import { Privacy, Terms } from "./pages/Legal.tsx";
 
 /*
  * Routes are statically imported (no React.lazy). This app is small enough
@@ -132,6 +133,8 @@ createRoot(document.getElementById("root")!).render(
               path="/auth"
               element={<AuthPage redirectAfterAuth="/cook" />}
             />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

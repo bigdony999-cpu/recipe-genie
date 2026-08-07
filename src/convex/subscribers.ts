@@ -1,4 +1,4 @@
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { api } from "./_generated/api";
 
@@ -57,5 +57,14 @@ export const subscribe = mutation({
     });
 
     return { status: "subscribed" as const };
+  },
+});
+
+/** All subscriber emails — used by the weekly newsletter action. */
+export const listSubscriberEmails = query({
+  args: {},
+  handler: async (ctx) => {
+    const subs = await ctx.db.query("subscribers").collect();
+    return subs.map((s) => s.email);
   },
 });

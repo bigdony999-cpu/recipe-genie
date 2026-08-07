@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, BookOpen, Download, ShieldCheck, Sparkles, Star, UtensilsCrossed } from "lucide-react";
 import { motion } from "framer-motion";
+import { trackEvent } from "@/lib/analytics";
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
@@ -203,6 +204,7 @@ export function EbookSection() {
                   href="https://greenspot.gumroad.com"
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackEvent("Ebook Click")}
                 >
                   <Download className="size-5" /> Get the ebook
                 </a>

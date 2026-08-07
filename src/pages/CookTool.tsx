@@ -16,6 +16,7 @@ import { FoodFactWidget } from "@/components/food-fact";
 import { InstallAppButton } from "@/components/install-app";
 import { ShareCardDialog } from "@/components/share-card";
 import { ShoppingListDialog } from "@/components/shopping-list";
+import { EbookUpsell } from "@/components/ebook-upsell";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useCookedRecipes } from "@/hooks/use-cooked-recipes";
 import { useSavedRecipes } from "@/hooks/use-saved-recipes";
@@ -787,6 +788,9 @@ export default function CookTool() {
                   </Button>
                 </div>
               )}
+
+              {/* Ebook upsell — only when there's something to cook */}
+              {visibleMatches.length > 0 && <EbookUpsell />}
 
               {/* Fun fact */}
               <div className="pt-2">

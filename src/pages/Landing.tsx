@@ -723,6 +723,12 @@ export default function Landing() {
             <Link to="/auth" className="transition-colors hover:text-foreground">
               Sign in
             </Link>
+            <Link to="/privacy" className="transition-colors hover:text-foreground">
+              Privacy
+            </Link>
+            <Link to="/terms" className="transition-colors hover:text-foreground">
+              Terms
+            </Link>
           </div>
         </div>
       </footer>
