@@ -4,7 +4,19 @@ import { action } from "./_generated/server";
 import { api } from "./_generated/api";
 
 const FALLBACK_FROM = "What Should I Cook? <onboarding@resend.dev>";
-const SITE_URL = "https://happy-rockets-follow.freebuff.dev";
+
+/**
+ * Resolve the live site URL so email links always point at the domain the
+ * site is actually served from (including a future custom domain). Falls back
+ * to VLY_SITE_URL if set, then to the current deployment address.
+ */
+function siteUrl(request?: { headers?: Headers }): string {
+  const origin = request?.headers?.get("origin");
+  if (origin && /^https?:\/\//.test(origin)) return origin;
+  return (
+    process.env.VLY_SITE_URL ?? "https://happy-rockets-follow.freebuff.dev"
+  );
+}
 
 interface WeeklyPick {
   name: string;
@@ -118,7 +130,8 @@ function pickCard(pick: WeeklyPick) {
  */
 export const sendWeeklyNewsletter = action({
   args: {},
-  handler: async (ctx) => {
+  handler: async (ctx, request) => {
+    const SITE_URL = siteUrl(request);
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) {
       return { sent: 0, skipped: true, reason: "missing-api-key" as const };
