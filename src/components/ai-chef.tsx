@@ -129,6 +129,16 @@ export function AiChefDialog({
   const [copied, setCopied] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  // The Radix ScrollArea renders its own scrollable viewport internally.
+  const viewportRef = useRef<HTMLElement | null>(null);
+
+  // Grab the actual scrollable viewport element so we can scroll it directly
+  // (more reliable than scrollIntoView, which can target the wrong ancestor).
+  const setScrollAreaRef = (node: HTMLDivElement | null) => {
+    viewportRef.current = node?.querySelector(
+      "[data-radix-scroll-area-viewport]",
+    ) ?? null;
+  };
 
   // Fresh chat every time the dialog opens.
   useEffect(() => {
@@ -139,10 +149,16 @@ export function AiChefDialog({
     }
   }, [open]);
 
-  // Keep the newest message in view. scrollIntoView scrolls whichever
-  // ancestor is actually scrollable (the ScrollArea viewport).
+  // Keep the newest message in view — but only if the user is already at the
+  // bottom. If they scrolled up to re-read a long answer, don't yank them down.
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ block: "end" });
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    const nearBottom =
+      viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight < 140;
+    if (nearBottom) {
+      viewport.scrollTop = viewport.scrollHeight;
+    }
   }, [messages, loading]);
 
   const send = async (raw?: string) => {
@@ -218,7 +234,19 @@ export function AiChefDialog({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent
           showCloseButton={false}
-          className="flex! h-[min(600px,82vh)] max-h-[82dvh] max-w-md flex-col! gap-0! overflow-hidden rounded-3xl p-0 sm:max-w-md"
+          className="max-w-md rounded-3xl p-0 sm:max-w-md"
+          // Inline styles force the dialog to be a flex column regardless of
+          // the base `grid` class, so the scroll area can shrink (min-h-0) and
+          // scroll instead of growing past the dialog edge. Height caps keep
+          // it inside the visible screen on mobile (dvh + vh fallback).
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+            gap: 0,
+            height: "min(600px, 82dvh)",
+            maxHeight: "min(640px, 88dvh)",
+          }}
         >
           <DialogTitle className="sr-only">Ask the AI chef</DialogTitle>
 
@@ -269,7 +297,7 @@ export function AiChefDialog({
               to shrink below its content height, so tall answers blow the
               dialog open, push the input off-screen and make scrolling
               impossible. min-h-0 lets it fill the leftover space and scroll. */}
-          <ScrollArea className="min-h-0 flex-1">
+          <ScrollArea ref={setScrollAreaRef} className="min-h-0 flex-1">
             <div className="min-h-full space-y-4 px-4 py-5">
               {messages.length === 0 && (
                 <div className="rounded-2xl border border-border/70 bg-card p-4">
@@ -311,7 +339,8 @@ export function AiChefDialog({
                 </div>
               )}
 
-              {/* Sentinel for auto-scroll */}
+              {/* Sentinel for auto-scroll (kept for layout; direct viewport
+                  scrolling is handled above). */}
               <div ref={bottomRef} aria-hidden />
             </div>
           </ScrollArea>
