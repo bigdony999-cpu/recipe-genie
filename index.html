@@ -66,6 +66,37 @@
 
 <body>
   <div id="root"></div>
+  <script>
+    // Boot watchdog: if the app module fails to load (white screen), show a
+    // clear, styled message with the actual error instead of leaving the page
+    // blank. Removes itself automatically once React mounts.
+    (function () {
+      var warned = false;
+      var show = function (heading, detail) {
+        if (warned) return;
+        warned = true;
+        var root = document.getElementById("root");
+        if (!root) return;
+        root.innerHTML =
+          '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#fdfaf7;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:24px">' +
+          '<div style="max-width:480px;text-align:center">' +
+          '<div style="font-size:40px">🥘</div>' +
+          '<h1 style="font-size:18px;font-weight:700;color:#1c1917;margin:12px 0 6px">' + heading + "</h1>" +
+          '<p style="font-size:13px;color:#57534e;margin:0 0 14px">' + detail + "</p>" +
+          '<button onclick="location.reload()" style="background:#c2542a;color:#fff;border:0;border-radius:9999px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer">Reload</button>' +
+          "</div></div>";
+      };
+      window.addEventListener("error", function (e) {
+        show("The app could not start", (e && e.message ? e.message : "Unknown load error") + ". Click Reload to try again.");
+      });
+      setTimeout(function () {
+        var root = document.getElementById("root");
+        if (root && root.childElementCount === 0) {
+          show("Still loading…", "The app is taking longer than expected to start. Click Reload to try again.");
+        }
+      }, 8000);
+    })();
+  </script>
   <script type="module" src="/src/main.tsx"></script>
 </body>
 
