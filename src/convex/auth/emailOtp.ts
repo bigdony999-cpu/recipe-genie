@@ -16,6 +16,11 @@ export const emailOtp = Email({
     return generateRandomString(random, alphabet, 6);
   },
   async sendVerificationRequest({ identifier: email, token }) {
+    // Prefer the platform-injected key so the secret never has to live in
+    // source. Falls back to the Freebuff relay key so OTP email keeps
+    // working until VLY_EMAIL_API_KEY is configured in the Keys tab.
+    const apiKey =
+      process.env.VLY_EMAIL_API_KEY ?? "fb_email_2crN1hqIArZP2bEfvjp5Qik4";
     try {
       await axios.post(
         "https://auth.freebuff.app/send_otp",
@@ -26,7 +31,7 @@ export const emailOtp = Email({
         },
         {
           headers: {
-            "x-api-key": "fb_email_2crN1hqIArZP2bEfvjp5Qik4",
+            "x-api-key": apiKey,
           },
         },
       );

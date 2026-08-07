@@ -2,6 +2,13 @@
 
 import { action } from "./_generated/server";
 import { v } from "convex/values";
+import { api } from "./_generated/api";
+
+/** Hard ceilings so one caller can't run up unbounded token usage. */
+const MAX_MESSAGES = 20;
+const MAX_MESSAGE_LENGTH = 2000;
+const MAX_INGREDIENTS = 30;
+const MAX_INGREDIENT_LENGTH = 80;
 
 /** Model used for answers; override via NVIDIA_MODEL env if you prefer. */
 const DEFAULT_MODEL = "meta/llama-3.1-8b-instruct";
@@ -27,7 +34,40 @@ export const askChef = action({
     ),
     ingredients: v.optional(v.array(v.string())),
   },
-  handler: async (_ctx, { messages, ingredients }) => {
+  handler: async (ctx, { messages, ingredients }) => {
+    // Sanitize & bound the inputs before spending any credits.
+    if (messages.length > MAX_MESSAGES) {
+      return {
+        ok: false as const,
+        reason: "too-many-messages",
+        reply: "That's a long conversation — let's start a fresh chat. 🍳",
+      };
+    }
+    if (messages.some((m) => m.content.length > MAX_MESSAGE_LENGTH)) {
+      return {
+        ok: false as const,
+        reason: "message-too-long",
+        reply: "Mind keeping each message under 2,000 characters?",
+      };
+    }
+    const cleanIngredients = (ingredients ?? [])
+      .slice(0, MAX_INGREDIENTS)
+      .map((s) => s.trim().slice(0, MAX_INGREDIENT_LENGTH))
+      .filter((s) => s.length > 0);
+
+    const allowed = await ctx.runMutation(api.rateLimit.consumeRateLimit, {
+      key: "ai-chef",
+      max: 30,
+      windowMs: 60_000,
+    });
+    if (!allowed) {
+      return {
+        ok: false as const,
+        reason: "rate-limited",
+        reply: "The chef is busy right now — give it a minute and try again. 👨‍🍳",
+      };
+    }
+
     const apiKey = process.env.NVIDIA_API_KEY;
     if (!apiKey) {
       return {
@@ -41,8 +81,8 @@ export const askChef = action({
     const model = process.env.NVIDIA_MODEL ?? DEFAULT_MODEL;
 
     let system = SYSTEM_PROMPT;
-    if (ingredients && ingredients.length > 0) {
-      system += `\n\nThe user currently has these ingredients available: ${ingredients.join(
+    if (cleanIngredients.length > 0) {
+      system += `\n\nThe user currently has these ingredients available: ${cleanIngredients.join(
         ", ",
       )}. Prioritize dishes that use them.`;
     }

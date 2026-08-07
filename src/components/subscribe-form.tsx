@@ -42,6 +42,16 @@ export function SubscribeForm({ className }: { className?: string }) {
           tone: "info",
           text: "You're already on the list — welcome back! 🍳",
         });
+      } else if (result.status === "invalid-email") {
+        setNotice({
+          tone: "error",
+          text: "That email doesn't look right — mind checking it?",
+        });
+      } else if (result.status === "rate-limited") {
+        setNotice({
+          tone: "error",
+          text: "Too many signups in a row — please try again in a minute.",
+        });
       } else {
         setNotice({
           tone: "success",

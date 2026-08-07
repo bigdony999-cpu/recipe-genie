@@ -39,6 +39,13 @@ const schema = defineSchema(
       createdAt: v.number(),
     }).index("by_email", ["email"]),
 
+    // server-side rate limiting buckets (see rateLimit.ts)
+    rate_limits: defineTable({
+      key: v.string(),
+      windowStart: v.number(),
+      count: v.number(),
+    }).index("by_key", ["key"]),
+
     // add other tables here
 
     // tableName: defineTable({
