@@ -580,7 +580,7 @@ export default function Landing() {
       </header>
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
+      <section className="relative">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_50%_at_50%_0%,oklch(0.55_0.16_32/0.09),transparent)]"
@@ -596,7 +596,7 @@ export default function Landing() {
                 Stop deciding. Start cooking.
               </span>
             </h1>
-            <p className="mt-5 max-w-lg text-base leading-7 text-muted-foreground sm:text-lg">
+            <p className="mt-5 max-w-lg break-words text-base leading-7 text-muted-foreground text-pretty sm:text-lg">
               Tell us what&apos;s in your kitchen and get 3–5 simple recipes
               you can cook right now. No sign-up, no grocery run, no
               &ldquo;what do I even have?&rdquo; staring contests.
