@@ -218,7 +218,7 @@ export function AiChefDialog({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent
           showCloseButton={false}
-          className="flex h-[min(600px,82vh)] max-w-md flex-col gap-0 overflow-hidden rounded-3xl p-0 sm:max-w-md"
+          className="flex! h-[min(600px,82vh)] max-h-[82dvh] max-w-md flex-col! gap-0! overflow-hidden rounded-3xl p-0 sm:max-w-md"
         >
           <DialogTitle className="sr-only">Ask the AI chef</DialogTitle>
 
@@ -265,8 +265,11 @@ export function AiChefDialog({
             )}
           </div>
 
-          {/* Messages */}
-          <ScrollArea className="flex-1">
+          {/* Messages — min-h-0 is critical: without it the flex item refuses
+              to shrink below its content height, so tall answers blow the
+              dialog open, push the input off-screen and make scrolling
+              impossible. min-h-0 lets it fill the leftover space and scroll. */}
+          <ScrollArea className="min-h-0 flex-1">
             <div className="min-h-full space-y-4 px-4 py-5">
               {messages.length === 0 && (
                 <div className="rounded-2xl border border-border/70 bg-card p-4">
