@@ -72,7 +72,13 @@ export default defineConfig({
     // Minify options - using esbuild (faster than terser)
     minify: 'esbuild',
   },
-  // Optimize dependencies
+  // Optimize dependencies.
+  // IMPORTANT: the include list below is the COMPLETE set of deps the app
+  // imports. The preview container is small (1 CPU / 2GB), and on-demand dep
+  // optimization can take minutes — during which the preview proxy times out
+  // every request (504) and the dev session crash-loops. Listing every dep
+  // here makes Vite prebundle everything deterministically, so the optimizer
+  // never has to run mid-session and dep requests are instant.
   optimizeDeps: {
     // Only scan the app entry HTML; avoids crawling unrelated *.html files
     // if a legacy snapshot accidentally contains leaked package folders.
@@ -83,8 +89,57 @@ export default defineConfig({
       'react-dom',
       'react-dom/client',
       'react-router',
+      'convex',
       '@convex-dev/auth/react',
+      '@vly-ai/integrations',
+      '@zumer/snapdom',
       'framer-motion',
+      'recharts',
+      'react-hook-form',
+      '@hookform/resolvers',
+      'zod',
+      'cmdk',
+      'vaul',
+      'sonner',
+      'input-otp',
+      'react-day-picker',
+      'embla-carousel-react',
+      'date-fns',
+      'lucide-react',
+      'react-intersection-observer',
+      'react-resizable-panels',
+      'class-variance-authority',
+      'clsx',
+      'tailwind-merge',
+      'next-themes',
+      'axios',
+      'hono',
+      '@radix-ui/react-accordion',
+      '@radix-ui/react-alert-dialog',
+      '@radix-ui/react-aspect-ratio',
+      '@radix-ui/react-avatar',
+      '@radix-ui/react-checkbox',
+      '@radix-ui/react-collapsible',
+      '@radix-ui/react-context-menu',
+      '@radix-ui/react-dialog',
+      '@radix-ui/react-dropdown-menu',
+      '@radix-ui/react-hover-card',
+      '@radix-ui/react-label',
+      '@radix-ui/react-menubar',
+      '@radix-ui/react-navigation-menu',
+      '@radix-ui/react-popover',
+      '@radix-ui/react-progress',
+      '@radix-ui/react-radio-group',
+      '@radix-ui/react-scroll-area',
+      '@radix-ui/react-select',
+      '@radix-ui/react-separator',
+      '@radix-ui/react-slider',
+      '@radix-ui/react-switch',
+      '@radix-ui/react-tabs',
+      '@radix-ui/react-toggle',
+      '@radix-ui/react-toggle-group',
+      '@radix-ui/react-tooltip',
+      '@radix-ui/react-slot',
     ],
   },
   // Performance hints
