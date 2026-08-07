@@ -369,11 +369,8 @@ export function AiChefDialog({
             </Button>
           </div>
 
-          {/* Footer */}
-          <div className="flex items-center justify-between border-t border-border/50 bg-card/40 px-4 py-2">
-            <p className="text-[11px] text-muted-foreground">
-              Powered by NVIDIA · answers may need a sprinkle of salt
-            </p>
+          {/* Footer — copy button only (NVIDIA attribution removed). */}
+          <div className="flex items-center justify-end border-t border-border/50 bg-card/40 px-4 py-2">
             {messages.some((m) => m.role === "assistant") && (
               <Button
                 type="button"
