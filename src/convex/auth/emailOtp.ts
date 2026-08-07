@@ -16,11 +16,15 @@ export const emailOtp = Email({
     return generateRandomString(random, alphabet, 6);
   },
   async sendVerificationRequest({ identifier: email, token }) {
-    // Prefer the platform-injected key so the secret never has to live in
-    // source. Falls back to the Freebuff relay key so OTP email keeps
-    // working until VLY_EMAIL_API_KEY is configured in the Keys tab.
-    const apiKey =
-      process.env.VLY_EMAIL_API_KEY ?? "fb_email_2crN1hqIArZP2bEfvjp5Qik4";
+    // The relay key must come from the environment (Keys tab) — never a
+    // hardcoded fallback. Set VLY_EMAIL_API_KEY in the project's Keys/API
+    // keys settings or OTP email will fail with a clear message.
+    const apiKey = process.env.VLY_EMAIL_API_KEY;
+    if (!apiKey) {
+      throw new Error(
+        "VLY_EMAIL_API_KEY is not set. Add the Freebuff email relay key in the project's Keys/API keys tab.",
+      );
+    }
     try {
       await axios.post(
         "https://auth.freebuff.app/send_otp",

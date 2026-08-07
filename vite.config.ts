@@ -89,7 +89,10 @@ export default defineConfig({
       'react-dom',
       'react-dom/client',
       'react-router',
-      'convex',
+      // NOTE: must be the subpath 'convex/react' (what the app imports), not
+      // the bare 'convex' root — that root entry is Node-oriented and esbuild
+      // cannot optimize it, which aborts the whole prebundle pass.
+      'convex/react',
       '@convex-dev/auth/react',
       '@vly-ai/integrations',
       '@zumer/snapdom',
