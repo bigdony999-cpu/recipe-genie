@@ -20,28 +20,73 @@ const QUICK_PROMPTS = [
 ];
 
 /**
- * Renders a small slice of markdown (bold + line breaks) safely —
- * no dangerouslySetInnerHTML, so model output can never inject HTML.
+ * Renders a small slice of markdown (bold, bullet & numbered lists, line
+ * breaks) safely — no dangerouslySetInnerHTML, so model output can never
+ * inject HTML. Every line wraps with `break-words` so long answers are
+ * always fully visible and never clipped at the bubble edge.
  */
 function RichText({ text }: { text: string }) {
+  // Split out **bold** segments; keep everything else literal.
+  const renderInline = (content: string, keyPrefix: string) => {
+    const parts = content.split(/\*\*(.+?)\*\*/g);
+    return parts.map((part, j) =>
+      j % 2 === 1 ? (
+        <strong key={`${keyPrefix}-${j}`} className="font-bold">
+          {part}
+        </strong>
+      ) : (
+        <span key={`${keyPrefix}-${j}`}>{part}</span>
+      ),
+    );
+  };
+
   const lines = text.split("\n");
   return (
     <div className="space-y-1.5">
       {lines.map((line, i) => {
         if (line.trim() === "") return null;
-        // Split out **bold** segments, keep everything else literal.
-        const parts = line.split(/\*\*(.+?)\*\*/g);
+
+        // Bullet list item:  - ...   * ...   • ...
+        const bullet = line.match(/^\s*[-*•]\s+(.+)$/);
+        if (bullet) {
+          return (
+            <p
+              key={i}
+              className="flex items-start gap-2 leading-relaxed"
+            >
+              <span
+                aria-hidden
+                className="mt-[0.6em] size-1.5 shrink-0 rounded-full bg-current opacity-60"
+              />
+              <span className="min-w-0 flex-1 break-words">
+                {renderInline(bullet[1], `b${i}`)}
+              </span>
+            </p>
+          );
+        }
+
+        // Numbered list item:  1. ...  1) ...
+        const numbered = line.match(/^\s*(\d+)[.)]\s+(.+)$/);
+        if (numbered) {
+          return (
+            <p
+              key={i}
+              className="flex items-start gap-2 leading-relaxed"
+            >
+              <span className="mt-px w-5 shrink-0 text-right text-xs font-bold tabular-nums opacity-70">
+                {numbered[1]}.
+              </span>
+              <span className="min-w-0 flex-1 break-words">
+                {renderInline(numbered[2], `n${i}`)}
+              </span>
+            </p>
+          );
+        }
+
+        // Plain paragraph.
         return (
-          <p key={i} className="leading-relaxed">
-            {parts.map((part, j) =>
-              j % 2 === 1 ? (
-                <strong key={j} className="font-bold">
-                  {part}
-                </strong>
-              ) : (
-                <span key={j}>{part}</span>
-              ),
-            )}
+          <p key={i} className="break-words leading-relaxed">
+            {renderInline(line, `p${i}`)}
           </p>
         );
       })}
@@ -222,7 +267,7 @@ export function AiChefDialog({
 
           {/* Messages */}
           <ScrollArea className="flex-1">
-            <div className="h-full space-y-4 px-4 py-5">
+            <div className="min-h-full space-y-4 px-4 py-5">
               {messages.length === 0 && (
                 <div className="rounded-2xl border border-border/70 bg-card p-4">
                   <p className="text-sm font-bold">Hi, I&apos;m Chef AI! 👋</p>
@@ -244,7 +289,7 @@ export function AiChefDialog({
                 >
                   <div
                     className={cn(
-                      "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-sm",
+                      "max-w-[85%] overflow-hidden break-words rounded-2xl px-4 py-2.5 text-sm shadow-sm",
                       m.role === "user"
                         ? "rounded-br-md bg-primary text-primary-foreground"
                         : "rounded-bl-md border border-border/70 bg-card",
