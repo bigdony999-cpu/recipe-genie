@@ -13,20 +13,23 @@
 
   <rect width="1200" height="630" fill="url(#bg)"/>
 
-  <!-- soft decorations -->
-  <g opacity="0.12">
-    <text x="90" y="130" font-size="110">🍳</text>
-    <text x="1010" y="560" font-size="120">🍝</text>
-    <text x="980" y="140" font-size="80">🥑</text>
-    <text x="140" y="540" font-size="90">🧀</text>
+  <!-- soft decorative shapes (drawn, no font glyphs needed) -->
+  <g opacity="0.14">
+    <circle cx="130" cy="120" r="64" fill="#e2542a"/>
+    <circle cx="1060" cy="540" r="76" fill="#d94d20"/>
+    <circle cx="1020" cy="130" r="40" fill="#65a30d"/>
+    <circle cx="180" cy="540" r="48" fill="#ca8a04"/>
+    <circle cx="600" cy="80" r="26" fill="#e2542a"/>
+    <circle cx="1120" cy="300" r="22" fill="#ca8a04"/>
+    <circle cx="90" cy="330" r="20" fill="#65a30d"/>
   </g>
 
   <!-- headline -->
-  <text x="600" y="250" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="800" fill="#431407">What&apos;s for dinner?</text>
-  <text x="600" y="330" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="700" fill="#c2542a">Stop deciding. Start cooking.</text>
-  <text x="600" y="390" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" fill="#9a3412">Pick what&apos;s in your kitchen — get 3–5 simple recipes in seconds.</text>
+  <text x="600" y="250" text-anchor="middle" font-family="Poppins, Arial, Helvetica, sans-serif" font-size="60" font-weight="700" fill="#431407">What's for dinner?</text>
+  <text x="600" y="330" text-anchor="middle" font-family="Poppins, Arial, Helvetica, sans-serif" font-size="36" font-weight="700" fill="#c2542a">Stop deciding. Start cooking.</text>
+  <text x="600" y="392" text-anchor="middle" font-family="Poppins, Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#9a3412">Pick what's in your kitchen — get 3–5 simple recipes in seconds.</text>
 
   <!-- pill -->
   <rect x="420" y="430" width="360" height="58" rx="29" fill="url(#cta)"/>
-  <text x="600" y="469" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700" fill="#ffffff">🍳 60+ recipes · free · no sign-up</text>
+  <text x="600" y="468" text-anchor="middle" font-family="Poppins, Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#ffffff">60+ recipes · free · no sign-up</text>
 </svg>

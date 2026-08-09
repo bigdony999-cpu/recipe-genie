@@ -13,10 +13,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta
     name="description"
-    content="What Should I Cook? Pick what's in your kitchen and get 3–5 simple recipes you can cook tonight. Free, no sign-up, made for students."
+    content="What Should I Cook? Pick what's in your kitchen and get 3–5 simple recipes you can cook tonight. Free, no sign-up."
   />
   <meta name="theme-color" content="#c2542a" />
   <meta name="robots" content="index, follow" />
+  <meta name="keywords" content="what should i cook, dinner ideas, easy recipes, recipes from ingredients, what to cook tonight, simple recipes, meal ideas" />
+  <meta name="author" content="What Should I Cook?" />
+  <link rel="canonical" href="/" />
   <title>What Should I Cook? — Dinner ideas from what you already have</title>
 
   <!-- Open Graph -->
@@ -25,12 +28,13 @@
   <meta property="og:title" content="What Should I Cook? — Stop deciding. Start cooking." />
   <meta
     property="og:description"
-    content="Pick what's in your kitchen and get 3–5 simple recipes you can cook tonight. Free, no sign-up, made for students."
+    content="Pick what's in your kitchen and get 3–5 simple recipes you can cook tonight. Free, no sign-up."
   />
   <meta property="og:url" content="/" />
-  <meta property="og:image" content="/og-cover.svg" />
+  <meta property="og:image" content="/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="What's for dinner? Pick what's in your kitchen — get 3–5 simple recipes in seconds." />
   <meta property="og:locale" content="en_US" />
 
   <!-- Twitter -->
@@ -40,17 +44,131 @@
     name="twitter:description"
     content="Pick what's in your kitchen and get 3–5 simple recipes you can cook tonight. Free, no sign-up."
   />
-  <meta name="twitter:image" content="/og-cover.svg" />
+  <meta name="twitter:image" content="/og-cover.png" />
+  <meta name="twitter:image:alt" content="What's for dinner? Pick what's in your kitchen — get 3–5 simple recipes in seconds." />
 
   <!-- Structured data -->
   <script type="application/ld+json">
+    [
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "What Should I Cook?",
+      "alternateName": "What To Cook",
       "description": "Pick what's in your kitchen and get 3–5 simple recipes you can cook tonight.",
       "url": "/"
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "What Should I Cook?",
+      "description": "Free recipe finder — pick the ingredients in your kitchen and get simple recipes you can cook tonight.",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": "Recipe suggestions by ingredient, time and difficulty filters, AI chef, shopping lists, weekly newsletter"
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Popular recipes from What Should I Cook?",
+      "description": "Simple recipes you can make with everyday ingredients.",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@type": "Recipe",
+            "name": "Spaghetti Bolognese",
+            "description": "A rich, saucy meat ragu tossed through spaghetti. Weeknight comfort food.",
+            "cookTime": "PT40M",
+            "recipeCategory": "Pasta"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "item": {
+            "@type": "Recipe",
+            "name": "Stovetop Mac & Cheese",
+            "description": "Oozy, cheesy, 20 minutes. The ultimate comfort dish.",
+            "cookTime": "PT20M",
+            "recipeCategory": "Pasta"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "item": {
+            "@type": "Recipe",
+            "name": "Restaurant-Style Fried Rice",
+            "description": "Smoky wok-style rice with egg and veg. Better than takeout.",
+            "cookTime": "PT20M",
+            "recipeCategory": "Rice"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "item": {
+            "@type": "Recipe",
+            "name": "Chicken Quesadillas",
+            "description": "Crispy tortillas packed with chicken and gooey cheese.",
+            "cookTime": "PT20M",
+            "recipeCategory": "Mexican"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 5,
+          "item": {
+            "@type": "Recipe",
+            "name": "Golden Lentil Soup",
+            "description": "Hearty, budget-friendly, and surprisingly fancy. Freezes great.",
+            "cookTime": "PT40M",
+            "recipeCategory": "Soup"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 6,
+          "item": {
+            "@type": "Recipe",
+            "name": "French Toast",
+            "description": "Golden, custardy toast with maple syrup. Sunday energy.",
+            "cookTime": "PT15M",
+            "recipeCategory": "Breakfast"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 7,
+          "item": {
+            "@type": "Recipe",
+            "name": "Crispy Potato Wedges",
+            "description": "Oven-baked wedges with paprika and garlic. Dip in anything.",
+            "cookTime": "PT40M",
+            "recipeCategory": "Side Dish"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 8,
+          "item": {
+            "@type": "Recipe",
+            "name": "Honey-Garlic Shrimp",
+            "description": "Sticky, garlicky shrimp in minutes. Serve over rice.",
+            "cookTime": "PT15M",
+            "recipeCategory": "Seafood"
+          }
+        }
+      ]
     }
+    ]
   </script>
 
   <script>
@@ -69,6 +187,25 @@
   <!-- Simple Analytics — 100% privacy-first, cookieless site analytics. -->
   <!-- Event queue: buffers sa_event() calls (newsletter signup, ebook clicks)
        even before the main script finishes loading, so goals are never lost. -->
+  <!-- Speed: warm up the analytics connection so the async script loads faster. -->
+  <link rel="dns-prefetch" href="https://scripts.simpleanalyticscdn.com" />
+  <link rel="preconnect" href="https://scripts.simpleanalyticscdn.com" crossorigin />
+  <link rel="dns-prefetch" href="https://queue.simpleanalytics.com" />
+  <link rel="preconnect" href="https://queue.simpleanalytics.com" crossorigin />
+
+  <!-- Resolve canonical + og:url to the absolute live URL (domain-agnostic,
+       so it follows the site wherever it is deployed). -->
+  <script>
+    (function () {
+      try {
+        var canonical = document.querySelector('link[rel="canonical"]');
+        if (canonical) canonical.href = window.location.origin + "/";
+        var ogUrl = document.querySelector('meta[property="og:url"]');
+        if (ogUrl) ogUrl.setAttribute("content", window.location.origin + "/");
+      } catch (e) {}
+    })();
+  </script>
+
   <script>
     window.sa_event =
       window.sa_event ||

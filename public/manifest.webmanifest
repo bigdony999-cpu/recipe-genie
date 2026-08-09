@@ -1,7 +1,7 @@
 {
   "name": "What Should I Cook?",
   "short_name": "What To Cook",
-  "description": "Pick what's in your kitchen and get 3–5 simple recipes you can cook tonight. Free, no sign-up, made for students.",
+  "description": "Pick what's in your kitchen and get 3–5 simple recipes you can cook tonight. Free, no sign-up."
   "id": "/",
   "start_url": "/",
   "scope": "/",

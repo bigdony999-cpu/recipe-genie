@@ -234,7 +234,7 @@ function DemoSection() {
 const FEATURES = [
   {
     icon: ChefHat,
-    title: "Built for students",
+    title: "Built for real kitchens",
     text: "Budget-friendly recipes that use what you already have. No fancy equipment, no rare ingredients.",
   },
   {
@@ -588,7 +588,7 @@ export default function Landing() {
         <div className="mx-auto grid w-full max-w-6xl items-center gap-14 px-4 pb-20 pt-16 sm:px-6 lg:grid-cols-2 lg:pb-28 lg:pt-24">
           <div>
             <Badge className="rounded-full bg-primary/10 px-3 py-1 text-primary shadow-none hover:bg-primary/10">
-              🍳 Free · No sign-up · Made for students
+              🍳 Free · No sign-up · 60+ recipes
             </Badge>
             <h1 className="mt-5 text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl lg:text-[4.25rem]">
               What&apos;s for dinner?

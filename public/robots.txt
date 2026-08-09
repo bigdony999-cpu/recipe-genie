@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Don't waste crawl budget on auth pages
+Disallow: /auth
+
+Sitemap: https://happy-rockets-follow.freebuff.dev/sitemap.xml
