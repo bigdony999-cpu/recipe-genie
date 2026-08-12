@@ -3,23 +3,27 @@ import { Toaster } from "@/components/ui/sonner";
 import { VlyToolbar } from "../vly-toolbar-readonly.tsx";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { ConvexReactClient } from "convex/react";
-import React, { StrictMode, useEffect } from "react";
+import React, { StrictMode, Suspense, lazy, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router";
 import "./index.css";
+import { Brand } from "@/components/Brand";
+// The landing page is the first-paint route, so it stays in the initial
+// bundle — splitting it out would add a network round-trip before anything
+// paints. Every other page is code-split into its own lazy chunk: the heavy
+// cook tool (share cards, shopping list, confetti, upsells) no longer ships
+// to visitors who never open it.
 import Landing from "./pages/Landing.tsx";
-import AuthPage from "./pages/Auth.tsx";
-import CookTool from "./pages/CookTool.tsx";
-import NotFound from "./pages/NotFound.tsx";
-import { Privacy, Terms } from "./pages/Legal.tsx";
 
-/*
- * Routes are statically imported (no React.lazy). This app is small enough
- * that code-splitting saves nothing, and static imports eliminate the
- * "Failed to fetch dynamically imported module" class of errors entirely —
- * every page ships in the initial bundle, so the preview proxy never has to
- * fetch a route module mid-session.
- */
+const CookTool = lazy(() => import("./pages/CookTool.tsx"));
+const AuthPage = lazy(() => import("./pages/Auth.tsx"));
+const Privacy = lazy(() =>
+  import("./pages/Legal.tsx").then((m) => ({ default: m.Privacy })),
+);
+const Terms = lazy(() =>
+  import("./pages/Legal.tsx").then((m) => ({ default: m.Terms })),
+);
+const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 
 /** Silent error boundary — if VlyToolbar crashes it renders nothing instead of
  *  crashing the whole app (e.g. hook errors in WebContainer environment). */
@@ -84,6 +88,28 @@ class RootErrorBoundary extends React.Component<
   }
 }
 
+/** Lightweight themed loader shown while a lazy route chunk is fetched. */
+function PageFallback() {
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur">
+        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
+          <Brand />
+        </div>
+      </header>
+      <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-center gap-5 px-4 py-28 text-center">
+        <span className="grid size-14 animate-pulse place-items-center rounded-2xl bg-primary/10 text-3xl">
+          🍳
+        </span>
+        <div className="space-y-2">
+          <div className="mx-auto h-3 w-40 animate-pulse rounded-full bg-muted" />
+          <div className="mx-auto h-3 w-64 animate-pulse rounded-full bg-muted" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
 function RouteSyncer() {
@@ -126,17 +152,19 @@ createRoot(document.getElementById("root")!).render(
       <ConvexAuthProvider client={convex}>
         <BrowserRouter>
           <RouteSyncer />
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/cook" element={<CookTool />} />
-            <Route
-              path="/auth"
-              element={<AuthPage redirectAfterAuth="/cook" />}
-            />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <Suspense fallback={<PageFallback />}>
+            <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route path="/cook" element={<CookTool />} />
+              <Route
+                path="/auth"
+                element={<AuthPage redirectAfterAuth="/cook" />}
+              />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
         </BrowserRouter>
         <Toaster />
       </ConvexAuthProvider>
