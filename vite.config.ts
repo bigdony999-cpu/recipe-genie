@@ -6,7 +6,14 @@ import { defineConfig } from "vite";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), vlyPlugin(), tailwindcss()],
+  plugins: [
+    react(),
+    // vlyPlugin is only needed in the Freebuff dev environment.
+    // On Vercel (or any other production build) it injects an import that
+    // fails with EISDIR because the package has strict exports.
+    ...(process.env.VERCEL ? [] : [vlyPlugin()]),
+    tailwindcss(),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
