@@ -69,7 +69,7 @@ export default defineConfig({
       "react-router",
       "convex/react",
       "@convex-dev/auth/react",
-      "@zumer/snapdom",
+
       "framer-motion",
       "recharts",
       "react-hook-form",
