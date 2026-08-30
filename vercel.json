@@ -1,5 +1,0 @@
-{
-  "buildCommand": "tsc -b && vite build --config vite.config.prod.ts",
-  "outputDirectory": "dist",
-  "framework": "vite"
-}
