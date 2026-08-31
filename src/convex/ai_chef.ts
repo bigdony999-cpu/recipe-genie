@@ -11,7 +11,7 @@ const MAX_INGREDIENTS = 30;
 const MAX_INGREDIENT_LENGTH = 80;
 
 /** Model used for answers; override via NVIDIA_MODEL env if you prefer. */
-const DEFAULT_MODEL = "meta/llama-3.1-8b-instruct";
+const DEFAULT_MODEL = "meta/llama-3.2-11b-vision-instruct";
 
 const SYSTEM_PROMPT = `You are Chef AI, a warm, friendly expert cooking and drinks assistant for the "What Should I Cook?" website.
 Help users decide what to cook or drink with what they already have.
