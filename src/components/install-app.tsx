@@ -50,7 +50,7 @@ export function InstallAppButton({ className }: { className?: string }) {
 
   const handleIosHint = () => {
     toast(
-      "In Safari, tap the Share button (□↑), scroll down, then “Add to Home Screen” 📱",
+      "In Safari, tap the Share button, scroll down, then “Add to Home Screen”.",
     );
   };
 

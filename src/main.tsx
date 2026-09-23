@@ -1,6 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { ConvexReactClient } from "convex/react";
+import { CookingPot } from "lucide-react";
 import React, { StrictMode, Suspense, lazy, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router";
@@ -78,8 +79,8 @@ function PageFallback() {
         </div>
       </header>
       <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-center gap-5 px-4 py-28 text-center">
-        <span className="grid size-14 animate-pulse place-items-center rounded-2xl bg-primary/10 text-3xl">
-          🍳
+        <span className="grid size-14 animate-pulse place-items-center rounded-2xl bg-primary/10 text-primary">
+          <CookingPot className="size-7" />
         </span>
         <div className="space-y-2">
           <div className="mx-auto h-3 w-40 animate-pulse rounded-full bg-muted" />

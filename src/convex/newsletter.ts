@@ -114,7 +114,6 @@ function isoWeekNumber(date: Date): number {
 function pickCard(pick: WeeklyPick) {
   return `
     <div style="background:#fff8f0;border:1px solid #f0e4d6;border-radius:14px;padding:18px;margin-bottom:12px;">
-      <p style="margin:0 0 4px;font-size:24px;">${pick.emoji}</p>
       <h3 style="margin:0 0 4px;font-size:17px;color:#1f1a17;">${pick.name}</h3>
       <p style="margin:0 0 8px;font-size:14px;line-height:1.6;color:#5c5249;">${pick.description}</p>
       <p style="margin:0 0 10px;font-size:13px;color:#9a9086;">${pick.timeMinutes} min · ${pick.difficulty}</p>
@@ -152,7 +151,7 @@ export const sendWeeklyNewsletter = action({
 
     const html = `
       <div style="font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;color:#1f1a17;background:#fdfbf8;border-radius:16px;">
-        <p style="font-size:32px;margin:0;">🍳</p>
+        <p style="font-size:16px;font-weight:800;color:#c2542a;margin:0;letter-spacing:0.02em;">What Should I Cook?</p>
         <h1 style="font-size:22px;line-height:1.3;margin:16px 0 8px;color:#1f1a17;">This week's recipe: ${featured.name}</h1>
         <p style="font-size:15px;line-height:1.7;color:#5c5249;margin:0 0 20px;">
           One tasty idea to save you from the 7pm "what's for dinner?" spiral —

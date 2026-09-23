@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
+import { cn } from "@/lib/utils";
 
 const COLORS = [
   "#e2542a",
@@ -22,15 +23,13 @@ interface Piece {
   height: number;
   delay: number;
   duration: number;
-  emoji: string | null;
+  round: boolean;
 }
-
-const EMOJI = ["🍳", "🥘", "✨", "🎉", "🍝", "🧑‍🍳"];
 
 /**
  * A zero-dependency confetti burst (pure framer-motion). Renders a fixed,
- * pointer-events-none overlay that scatters colored pieces + food emoji from
- * the center of the screen and then unmounts itself.
+ * pointer-events-none overlay that scatters colored paper pieces from the
+ * center of the screen and then unmounts itself.
  */
 export function ConfettiBurst() {
   const [gone, setGone] = useState(false);
@@ -43,22 +42,23 @@ export function ConfettiBurst() {
   }, []);
 
   const pieces = useMemo<Piece[]>(() => {
-    const count = 42;
+    const count = 46;
     return Array.from({ length: count }, (_, i) => {
       const angle = (i / count) * Math.PI * 2 + Math.random() * 0.6;
       const distance = 120 + Math.random() * 220;
-      const isEmoji = i % 6 === 0;
+      const round = i % 3 === 0;
+      const width = round ? 8 + Math.random() * 6 : 6 + Math.random() * 8;
       return {
         id: i,
         x: Math.cos(angle) * distance,
         y: Math.sin(angle) * distance - 60,
         rotate: Math.random() * 720 - 360,
         color: COLORS[i % COLORS.length],
-        width: 6 + Math.random() * 8,
-        height: 10 + Math.random() * 10,
+        width,
+        height: round ? width : 10 + Math.random() * 10,
         delay: Math.random() * 0.12,
         duration: 1.4 + Math.random() * 1,
-        emoji: isEmoji ? EMOJI[Math.floor(Math.random() * EMOJI.length)] : null,
+        round,
       };
     });
   }, []);
@@ -70,54 +70,34 @@ export function ConfettiBurst() {
       aria-hidden
       className="pointer-events-none fixed inset-0 z-[90] overflow-hidden"
     >
-      {pieces.map((p) =>
-        p.emoji ? (
-          <motion.span
-            key={p.id}
-            initial={{ x: 0, y: 0, opacity: 1, scale: 0.4 }}
-            animate={{
-              x: p.x,
-              y: p.y + 200,
-              opacity: [1, 1, 0],
-              scale: [0.4, 1.4, 1],
-              rotate: p.rotate,
-            }}
-            transition={{
-              duration: p.duration,
-              delay: p.delay,
-              ease: [0.16, 1, 0.3, 1],
-            }}
-            className="absolute left-1/2 top-1/2 text-2xl"
-            style={{ marginLeft: -14, marginTop: -14 }}
-          >
-            {p.emoji}
-          </motion.span>
-        ) : (
-          <motion.span
-            key={p.id}
-            initial={{ x: 0, y: 0, opacity: 1, rotate: 0 }}
-            animate={{
-              x: p.x,
-              y: p.y + 240,
-              opacity: [1, 1, 0],
-              rotate: p.rotate,
-            }}
-            transition={{
-              duration: p.duration,
-              delay: p.delay,
-              ease: [0.16, 1, 0.3, 1],
-            }}
-            className="absolute left-1/2 top-1/2 rounded-sm"
-            style={{
-              width: p.width,
-              height: p.height,
-              backgroundColor: p.color,
-              marginLeft: -p.width / 2,
-              marginTop: -p.height / 2,
-            }}
-          />
-        ),
-      )}
+      {pieces.map((p) => (
+        <motion.span
+          key={p.id}
+          initial={{ x: 0, y: 0, opacity: 1, rotate: 0 }}
+          animate={{
+            x: p.x,
+            y: p.y + 240,
+            opacity: [1, 1, 0],
+            rotate: p.rotate,
+          }}
+          transition={{
+            duration: p.duration,
+            delay: p.delay,
+            ease: [0.16, 1, 0.3, 1],
+          }}
+          className={cn(
+            "absolute left-1/2 top-1/2",
+            p.round ? "rounded-full" : "rounded-sm",
+          )}
+          style={{
+            width: p.width,
+            height: p.height,
+            backgroundColor: p.color,
+            marginLeft: -p.width / 2,
+            marginTop: -p.height / 2,
+          }}
+        />
+      ))}
     </div>
   );
 }

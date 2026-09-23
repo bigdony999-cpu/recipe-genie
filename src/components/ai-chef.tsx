@@ -182,7 +182,7 @@ export function AiChefDialog({
         {
           role: "assistant",
           content:
-            "The AI chef hit a snag — please try again in a moment. 🍳",
+            "The AI chef hit a snag — please try again in a moment.",
         },
       ]);
     } finally {
@@ -252,15 +252,13 @@ export function AiChefDialog({
 
           {/* Header */}
           <div className="relative overflow-hidden bg-gradient-to-br from-primary via-primary to-[#8a3512] px-5 py-4 text-primary-foreground">
-            <div
+            <ChefHat
               aria-hidden
-              className="pointer-events-none absolute -right-4 -top-6 select-none text-6xl leading-none opacity-20"
-            >
-              🍳
-            </div>
+              className="pointer-events-none absolute -right-3 -top-5 size-28 rotate-12 text-white/15"
+            />
             <div className="flex items-center gap-3">
-              <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-white/15 text-2xl backdrop-blur-sm">
-                👨‍🍳
+              <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-white/15 backdrop-blur-sm">
+                <ChefHat className="size-6" />
               </span>
               <div className="min-w-0 flex-1">
                 <p className="text-base font-extrabold tracking-tight">
@@ -301,7 +299,7 @@ export function AiChefDialog({
             <div className="min-h-full space-y-4 px-4 py-5">
               {messages.length === 0 && (
                 <div className="rounded-2xl border border-border/70 bg-card p-4">
-                  <p className="text-sm font-bold">Hi, I&apos;m Chef AI! 👋</p>
+                  <p className="text-sm font-bold">Hi, I&apos;m Chef AI!</p>
                   <p className="mt-1 text-sm leading-6 text-muted-foreground">
                     Ask me what to cook or drink — with whatever you have on
                     hand. Recipe ideas, substitutions, food facts, pairing

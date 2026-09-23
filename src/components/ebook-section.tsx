@@ -1,6 +1,18 @@
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ArrowRight, BookOpen, Download, ShieldCheck, Sparkles, Star, UtensilsCrossed } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpen,
+  ChefHat,
+  Clock,
+  CookingPot,
+  Download,
+  GraduationCap,
+  ShieldCheck,
+  Sparkles,
+  Star,
+  Users,
+  UtensilsCrossed,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import { trackEvent } from "@/lib/analytics";
 
@@ -43,19 +55,15 @@ function BookCover() {
 
         {/* Front cover */}
         <div className="relative w-72 overflow-hidden rounded-r-xl rounded-l-[6px] bg-gradient-to-br from-[#e2542a] via-[#c2410c] to-[#7c2d12] p-7 text-[#fff7ed] shadow-[24px_28px_60px_-12px_rgba(124,45,18,0.55)] transition-shadow duration-500 group-hover:shadow-[18px_22px_50px_-10px_rgba(124,45,18,0.5)] sm:w-80">
-          {/* Cover art — food emoji pattern */}
-          <div
+          {/* Cover art — oversized outline icon watermarks */}
+          <UtensilsCrossed
             aria-hidden
-            className="pointer-events-none absolute -right-8 -top-8 select-none text-[150px] leading-none opacity-20"
-          >
-            🍝
-          </div>
-          <div
+            className="pointer-events-none absolute -right-8 -top-7 size-44 rotate-12 text-white/10"
+          />
+          <CookingPot
             aria-hidden
-            className="pointer-events-none absolute -bottom-10 -left-6 select-none text-[130px] leading-none opacity-15"
-          >
-            🍳
-          </div>
+            className="pointer-events-none absolute -bottom-9 -left-7 size-40 -rotate-6 text-white/10"
+          />
 
           <div className="relative">
             <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-amber-200/90">
@@ -149,10 +157,7 @@ export function EbookSection() {
 
           {/* Copy */}
           <motion.div {...fadeUp} className="order-1 lg:order-2">
-            <Badge className="rounded-full bg-primary/10 px-3 py-1 text-primary shadow-none hover:bg-primary/10">
-              📖 Now available
-            </Badge>
-            <h2 className="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1]">
+            <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1]">
               The Everyday Cookbook —{" "}
               <span className="text-primary">every recipe you&apos;ll ever need</span>{" "}
               in one book
@@ -165,16 +170,20 @@ export function EbookSection() {
             </p>
 
             <div className="mt-5 flex flex-wrap gap-2">
-              {["🎓 Students", "👨‍👩‍👧 Busy parents", "🧑‍🍳 First-time cooks", "⏰ Time-poor professionals"].map(
-                (audience) => (
-                  <span
-                    key={audience}
-                    className="rounded-full border border-border bg-card px-3 py-1 text-xs font-semibold text-muted-foreground"
-                  >
-                    {audience}
-                  </span>
-                ),
-              )}
+              {[
+                { icon: GraduationCap, label: "Students" },
+                { icon: Users, label: "Busy parents" },
+                { icon: ChefHat, label: "First-time cooks" },
+                { icon: Clock, label: "Time-poor professionals" },
+              ].map((audience) => (
+                <span
+                  key={audience.label}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-semibold text-muted-foreground"
+                >
+                  <audience.icon className="size-3.5 text-primary" />
+                  {audience.label}
+                </span>
+              ))}
             </div>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2">

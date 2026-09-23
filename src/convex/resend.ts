@@ -24,7 +24,7 @@ export const sendWelcomeEmail = action({
 
     const html = `
       <div style="font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;color:#1f1a17;background:#fdfbf8;border-radius:16px;">
-        <p style="font-size:32px;margin:0;">🍳</p>
+        <p style="font-size:16px;font-weight:800;color:#c2542a;margin:0;letter-spacing:0.02em;">What Should I Cook?</p>
         <h1 style="font-size:22px;line-height:1.3;margin:16px 0 8px;color:#1f1a17;">Welcome to What Should I Cook?</h1>
         <p style="font-size:15px;line-height:1.7;color:#5c5249;margin:0 0 20px;">
           You're in! Once a week we'll send you simple recipes and fun food
@@ -53,7 +53,7 @@ export const sendWelcomeEmail = action({
         body: JSON.stringify({
           from,
           to: [email],
-          subject: "Welcome to What Should I Cook? 🍳",
+          subject: "Welcome to What Should I Cook?",
           html,
         }),
       });

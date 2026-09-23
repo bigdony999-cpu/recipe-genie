@@ -54,7 +54,7 @@ function LegalLayout({
         <div className="mx-auto flex w-full max-w-4xl flex-col items-center justify-between gap-4 px-4 sm:flex-row sm:px-6">
           <Brand />
           <p className="text-sm text-muted-foreground">
-            Made with 🍳 for people who can&apos;t decide what to cook.
+            Made for people who can&apos;t decide what to cook.
           </p>
           <div className="flex items-center gap-4 text-sm font-medium text-muted-foreground">
             <Link to="/privacy" className="transition-colors hover:text-foreground">

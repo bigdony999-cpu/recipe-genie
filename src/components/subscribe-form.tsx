@@ -41,7 +41,7 @@ export function SubscribeForm({ className }: { className?: string }) {
       if (result.status === "already-subscribed") {
         setNotice({
           tone: "info",
-          text: "You're already on the list — welcome back! 🍳",
+          text: "You're already on the list — welcome back!",
         });
       } else if (result.status === "invalid-email") {
         setNotice({
@@ -56,7 +56,7 @@ export function SubscribeForm({ className }: { className?: string }) {
       } else {
         setNotice({
           tone: "success",
-          text: "You're in! Watch your inbox for fresh recipe ideas. 🥘",
+          text: "You're in! Watch your inbox for fresh recipe ideas.",
         });
         setEmail("");
         trackEvent("Newsletter Signup");

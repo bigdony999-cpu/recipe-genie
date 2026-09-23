@@ -18,13 +18,11 @@ export function EbookUpsell() {
       transition={{ duration: 0.4 }}
       className="relative mt-6 overflow-hidden rounded-3xl border border-primary/25 bg-gradient-to-br from-primary/10 via-card to-card p-5 sm:p-6"
     >
-      {/* faint cover art in the background */}
-      <div
+      {/* faint cover icon in the background */}
+      <BookOpen
         aria-hidden
-        className="pointer-events-none absolute -right-6 -top-8 select-none text-[110px] leading-none opacity-10"
-      >
-        📖
-      </div>
+        className="pointer-events-none absolute -right-7 -top-7 size-36 rotate-12 text-primary opacity-10"
+      />
 
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
         {/* Mini book cover */}
@@ -48,10 +46,7 @@ export function EbookUpsell() {
 
         {/* Copy */}
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-semibold uppercase tracking-widest text-primary">
-            Liking these picks? 📖
-          </p>
-          <h3 className="mt-1 text-lg font-extrabold tracking-tight">
+          <h3 className="text-lg font-extrabold tracking-tight">
             Get 60+ more recipes in the Everyday Cookbook
           </h3>
           <p className="mt-1 text-sm leading-6 text-muted-foreground">

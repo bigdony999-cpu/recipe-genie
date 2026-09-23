@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { buildShareText, type ScoredRecipe } from "@/lib/recipe-matcher";
-import { Check, ClipboardCopy, Share2, X } from "lucide-react";
+import { Check, ClipboardCopy, CookingPot, Share2, UtensilsCrossed, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -39,10 +39,10 @@ export function ShareCardDialog({
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
-      toast("Copied — paste it in the group chat! 📋");
+      toast("Copied — paste it in the group chat!");
       window.setTimeout(() => setCopied(false), 1600);
     } catch {
-      toast("Copy isn't available here — screenshot the card instead! 📸");
+      toast("Copy isn't available here — screenshot the card instead!");
     }
   };
 
@@ -68,12 +68,10 @@ export function ShareCardDialog({
       >
         {/* The card itself — designed to look great in a screenshot */}
         <div className="relative bg-gradient-to-br from-[#fff7ed] via-[#ffedd5] to-[#fed7aa] p-6 text-[#431407]">
-          <div
+          <CookingPot
             aria-hidden
-            className="pointer-events-none absolute -right-6 -top-8 select-none text-8xl leading-none opacity-10"
-          >
-            🍳
-          </div>
+            className="pointer-events-none absolute -right-7 -top-7 size-32 rotate-12 text-[#c2410c] opacity-10"
+          />
           <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#c2410c]">
             Tonight I'm cooking
           </p>
@@ -89,8 +87,8 @@ export function ShareCardDialog({
                 key={recipe.id}
                 className="flex items-center gap-3 rounded-2xl border border-[#fdba74]/70 bg-white/80 p-3 shadow-sm"
               >
-                <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-[#ffedd5] text-2xl">
-                  {recipe.emoji}
+                <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-[#ffedd5] text-[#c2410c]">
+                  <UtensilsCrossed className="size-5" />
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-bold text-[#431407]">
@@ -110,7 +108,7 @@ export function ShareCardDialog({
 
           <div className="mt-5 border-t border-dashed border-[#fdba74] pt-3 text-center">
             <p className="text-sm font-extrabold">
-              Made with What Should I Cook? 🍳
+              Made with What Should I Cook?
             </p>
             <p className="mt-0.5 text-[11px] font-medium text-[#9a3412]">
               Pick what's in your kitchen → dinner sorted

@@ -60,17 +60,17 @@ export function buildShareText(
 ): string {
   if (matches.length === 0) return "";
 
-  const lines: string[] = ["🥘 What should I cook? Here's my shortlist:"];
+  const lines: string[] = ["What should I cook? Here's my shortlist:"];
   matches.forEach(({ recipe, matched }, index) => {
     const used = matched.map(ingredientLabel).join(", ");
     lines.push(
-      `${index + 1}. ${recipe.emoji} ${recipe.name} — ${recipe.timeMinutes} min · ${recipe.difficulty}`,
+      `${index + 1}. ${recipe.name} — ${recipe.timeMinutes} min · ${recipe.difficulty}`,
     );
     lines.push(`   ${recipe.description}`);
-    if (used) lines.push(`   ✅ I already have: ${used}`);
+    if (used) lines.push(`   I already have: ${used}`);
   });
   lines.push("");
-  lines.push("Made with What Should I Cook? 🍳");
+  lines.push("Made with What Should I Cook?");
 
   if (selectedLabels.length > 0) {
     lines.push(`My ingredients: ${selectedLabels.join(", ")}`);

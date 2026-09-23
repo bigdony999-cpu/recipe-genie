@@ -2,7 +2,18 @@ import { Button } from "@/components/ui/button";
 import { FOOD_FACTS, type FactCategory } from "@/data/facts";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { Copy, Lightbulb, Shuffle } from "lucide-react";
+import {
+  Apple,
+  CookingPot,
+  Copy,
+  CupSoda,
+  FlaskConical,
+  History,
+  Lightbulb,
+  Salad,
+  Shuffle,
+  type LucideIcon,
+} from "lucide-react";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
@@ -18,6 +29,16 @@ const CATEGORY_STYLES: Record<FactCategory, string> = {
     "bg-violet-50 text-violet-700 ring-violet-600/15 dark:bg-violet-500/10 dark:text-violet-300 dark:ring-violet-400/20",
   Science:
     "bg-teal-50 text-teal-700 ring-teal-600/15 dark:bg-teal-500/10 dark:text-teal-300 dark:ring-teal-400/20",
+};
+
+/** Striking per-category icons — used instead of emoji on the fact card. */
+const CATEGORY_ICONS: Record<FactCategory, LucideIcon> = {
+  Food: CookingPot,
+  Fruit: Apple,
+  Drink: CupSoda,
+  Veggie: Salad,
+  History: History,
+  Science: FlaskConical,
 };
 
 /** Deterministic "fact of the day" so returning visitors see a stable pick. */
@@ -42,12 +63,12 @@ export function FoodFactWidget({ className }: { className?: string }) {
   }, []);
 
   const copyFact = useCallback(async () => {
-    const text = `${fact.emoji} ${fact.fact} — via What Should I Cook? 🍳`;
+    const text = `${fact.fact} — via What Should I Cook?`;
     try {
       await navigator.clipboard.writeText(text);
-      toast("Fact copied — impress the group chat! 📋");
+      toast("Fact copied — impress the group chat!");
     } catch {
-      toast("Copy isn't available here, but enjoy the fact anyway 😄");
+      toast("Copy isn't available here, but enjoy the fact anyway.");
     }
   }, [fact]);
 
@@ -75,9 +96,15 @@ export function FoodFactWidget({ className }: { className?: string }) {
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.22, ease: "easeOut" }}
         >
-          <p className="mt-4 text-4xl" aria-hidden>
-            {fact.emoji}
-          </p>
+          <span
+            className="mt-4 grid size-12 place-items-center rounded-2xl bg-primary/10 text-primary"
+            aria-hidden
+          >
+            {(() => {
+              const Icon = CATEGORY_ICONS[fact.category];
+              return <Icon className="size-6" />;
+            })()}
+          </span>
           <span
             className={cn(
               "mt-3 inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold ring-1 ring-inset",
@@ -105,7 +132,7 @@ export function FoodFactWidget({ className }: { className?: string }) {
           <Copy className="size-4" /> Copy it
         </Button>
         <span className="ml-auto text-xs text-muted-foreground">
-          🍳 {FOOD_FACTS.length} facts in the jar
+          {FOOD_FACTS.length} facts in the jar
         </span>
       </div>
     </div>

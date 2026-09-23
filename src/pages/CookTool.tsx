@@ -5,7 +5,7 @@ import {
   type IngredientCategory,
 } from "@/data/ingredients";
 import { findRecipes, surpriseMe, type ScoredRecipe } from "@/lib/recipe-matcher";
-import { ingredientEmoji, ingredientLabel, type Difficulty } from "@/data/recipes";
+import { ingredientLabel, type Difficulty } from "@/data/recipes";
 import { AiChefDialog } from "@/components/ai-chef";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,7 @@ import {
   Heart,
   Lightbulb,
   RotateCcw,
+  Sandwich,
   Search,
   Share2,
   Shuffle,
@@ -38,6 +39,7 @@ import {
   SlidersHorizontal,
   Sparkles,
   Users,
+  UtensilsCrossed,
   X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -48,13 +50,11 @@ import { toast } from "sonner";
 function IngredientChip({
   id,
   label,
-  emoji,
   selected,
   onToggle,
 }: {
   id: string;
   label: string;
-  emoji: string;
   selected: boolean;
   onToggle: (id: string) => void;
 }) {
@@ -71,11 +71,13 @@ function IngredientChip({
       )}
     >
       {selected && <Check className="size-3.5 shrink-0" />}
-      <span aria-hidden>{emoji}</span>
       {label}
     </button>
   );
 }
+
+/** Polished dish icons shown on recipe cards instead of emoji. */
+const CARD_ICONS = [UtensilsCrossed, Sandwich, CookingPot];
 
 function RecipeCard({
   item,
@@ -95,6 +97,7 @@ function RecipeCard({
   onToggleCooked: (id: string) => void;
 }) {
   const { recipe, matched, missing } = item;
+  const Icon = CARD_ICONS[index % CARD_ICONS.length];
   return (
     <motion.div
       layout
@@ -112,8 +115,8 @@ function RecipeCard({
       )}
     >
       <div className="flex gap-4">
-        <div className="grid size-14 shrink-0 place-items-center rounded-2xl bg-primary/10 text-3xl">
-          <span aria-hidden>{recipe.emoji}</span>
+        <div className="grid size-14 shrink-0 place-items-center rounded-2xl bg-primary/10 text-primary">
+          <Icon className="size-7" />
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
@@ -177,7 +180,7 @@ function RecipeCard({
                 ? `Mark ${recipe.name} as not cooked`
                 : `Mark ${recipe.name} as cooked`
             }
-            title={cooked ? "Cooked it! 🎉" : "Mark as cooked"}
+            title={cooked ? "Cooked it!" : "Mark as cooked"}
             className={cn(
               "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-bold transition-all active:scale-90",
               cooked
@@ -269,14 +272,14 @@ export default function CookTool() {
   const handleToggleSaved = (id: string) => {
     const wasSaved = isSaved(id);
     toggleSaved(id);
-    if (!wasSaved) toast("Saved to your list — tap the heart to undo ❤️");
+    if (!wasSaved) toast("Saved to your list — tap the heart to undo");
   };
 
   const handleToggleCooked = (id: string) => {
     const wasCooked = isCooked(id);
     toggleCooked(id);
     if (!wasCooked) {
-      toast("Cooked it! Give yourself a chef high-five 🧑‍🍳");
+      toast("Cooked it! Give yourself a chef high-five");
       fireConfetti();
     }
   };
@@ -299,7 +302,7 @@ export default function CookTool() {
   const handleSurprise = () => {
     const pick = surpriseMe(new Set(selected));
     if (!pick) {
-      toast("Add a couple more ingredients first 🧺");
+      toast("Add a couple more ingredients first");
       return;
     }
     setSurpriseId(null);
@@ -348,10 +351,7 @@ export default function CookTool() {
         <div className="grid gap-10 lg:grid-cols-[5fr_7fr] lg:gap-12">
           {/* ---------- Ingredients ---------- */}
           <section className="min-w-0">
-            <p className="text-sm font-semibold uppercase tracking-widest text-primary">
-              Step 1 · Your pantry
-            </p>
-            <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
               What&apos;s in your kitchen?
             </h1>
             <p className="mt-2 max-w-md text-sm leading-6 text-muted-foreground">
@@ -385,7 +385,7 @@ export default function CookTool() {
                       ) : (
                         <Sparkles className="size-3" />
                       )}
-                      {ingredientEmoji(id)} {ingredientLabel(id)}
+                      {ingredientLabel(id)}
                     </button>
                   );
                 })}
@@ -434,7 +434,6 @@ export default function CookTool() {
                           key={ing.id}
                           id={ing.id}
                           label={ing.label}
-                          emoji={ing.emoji}
                           selected={selected.includes(ing.id)}
                           onToggle={toggle}
                         />
@@ -466,7 +465,7 @@ export default function CookTool() {
                       className="inline-flex items-center gap-1 rounded-full bg-card px-2.5 py-1 text-xs font-medium text-foreground ring-1 ring-inset ring-border transition hover:ring-primary/50"
                       title={`Remove ${ingredientLabel(id)}`}
                     >
-                      {ingredientEmoji(id)} {ingredientLabel(id)}
+                      {ingredientLabel(id)}
                       <span aria-hidden className="text-muted-foreground">
                         ×
                       </span>
@@ -490,10 +489,7 @@ export default function CookTool() {
             ref={resultsRef}
             className="min-w-0 scroll-mt-20 lg:sticky lg:top-24 lg:self-start"
           >
-            <p className="text-sm font-semibold uppercase tracking-widest text-primary">
-              Step 2 · Your dinner
-            </p>
-            <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
               Tonight&apos;s shortlist
             </h2>
 
@@ -599,24 +595,17 @@ export default function CookTool() {
 
             {/* Results banner */}
             <div className="relative mt-6 overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-primary to-[#8a3512] p-6 text-primary-foreground shadow-lg shadow-primary/20 sm:p-7">
-              <div
+              <UtensilsCrossed
                 aria-hidden
-                className="pointer-events-none absolute -right-4 -top-6 select-none text-[110px] leading-none opacity-15"
-              >
-                🍳
-              </div>
-              <div
+                className="pointer-events-none absolute -right-7 -top-8 size-40 rotate-12 text-white/10"
+              />
+              <ShoppingBasket
                 aria-hidden
-                className="pointer-events-none absolute bottom-2 right-16 select-none text-5xl leading-none opacity-15"
-              >
-                🥑
-              </div>
+                className="pointer-events-none absolute bottom-1 right-16 size-24 text-white/10"
+              />
               {matches.length > 0 && visibleMatches.length > 0 ? (
                 <>
-                  <p className="text-xs font-semibold uppercase tracking-widest text-primary-foreground/70">
-                    Made for your pantry
-                  </p>
-                  <p className="mt-1.5 text-2xl font-bold tracking-tight sm:text-3xl">
+                  <p className="text-2xl font-bold tracking-tight sm:text-3xl">
                     {visibleMatches.length === 1
                       ? "1 idea worth cooking"
                       : `${visibleMatches.length} ideas worth cooking`}
@@ -631,10 +620,7 @@ export default function CookTool() {
                 </>
               ) : matches.length > 0 ? (
                 <>
-                  <p className="text-xs font-semibold uppercase tracking-widest text-primary-foreground/70">
-                    Too picky today?
-                  </p>
-                  <p className="mt-1.5 text-2xl font-bold tracking-tight sm:text-3xl">
+                  <p className="text-2xl font-bold tracking-tight sm:text-3xl">
                     Loosen a filter to see picks
                   </p>
                   <p className="mt-1 text-sm text-primary-foreground/75">
@@ -644,10 +630,7 @@ export default function CookTool() {
                 </>
               ) : (
                 <>
-                  <p className="text-xs font-semibold uppercase tracking-widest text-primary-foreground/70">
-                    Ready when you are
-                  </p>
-                  <p className="mt-1.5 text-2xl font-bold tracking-tight sm:text-3xl">
+                  <p className="text-2xl font-bold tracking-tight sm:text-3xl">
                     Pick some ingredients to begin
                   </p>
                   <p className="mt-1 text-sm text-primary-foreground/75">
@@ -706,7 +689,9 @@ export default function CookTool() {
                 visibleMatches.length === 0 &&
                 activeFilterCount > 0 && (
                   <div className="rounded-2xl border border-dashed border-border bg-card/60 p-8 text-center">
-                    <p className="text-3xl">🔍</p>
+                    <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-primary/10 text-primary">
+                      <Search className="size-7" />
+                    </span>
                     <h3 className="mt-2 font-bold">Nothing fits those filters</h3>
                     <p className="mx-auto mt-1 max-w-xs text-sm leading-6 text-muted-foreground">
                       Try a longer time limit or an easier level — or just
@@ -723,8 +708,9 @@ export default function CookTool() {
                 )}
 
               {savedOnly && visibleMatches.length === 0 && (
-                <div className="rounded-2xl border border-dashed border-border bg-card/60 p-8 text-center">
-                  <p className="text-3xl">💗</p>
+                <div className="rounded-2xl border border-dashed border-border bg-card/60 p-8 text-center">                    <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-primary/10 text-primary">
+                      <Heart className="size-7" />
+                    </span>
                   <h3 className="mt-2 font-bold">
                     {saved.length === 0
                       ? "Nothing saved yet"
@@ -746,9 +732,10 @@ export default function CookTool() {
               )}
 
               {selected.length > 0 && matches.length === 0 && (
-                <div className="rounded-2xl border border-dashed border-border bg-card/60 p-8 text-center">
-                  <p className="text-3xl">🤔</p>
-                  <h3 className="mt-2 font-bold">Nothing clicked yet</h3>
+                <div className="rounded-2xl border border-dashed border-border bg-card/60 p-8 text-center">                    <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-primary/10 text-primary">
+                      <Lightbulb className="size-7" />
+                    </span>
+                    <h3 className="mt-2 font-bold">Nothing clicked yet</h3>
                   <p className="mx-auto mt-1 max-w-xs text-sm leading-6 text-muted-foreground">
                     Those ingredients don&apos;t overlap with our recipes yet.
                     Add a staple like rice, pasta, eggs or chicken — they
@@ -770,9 +757,10 @@ export default function CookTool() {
               )}
 
               {selected.length === 0 && (
-                <div className="rounded-2xl border border-dashed border-border bg-card/60 p-8 text-center">
-                  <p className="text-3xl">🍳</p>
-                  <h3 className="mt-2 font-bold">Your shortlist appears here</h3>
+                <div className="rounded-2xl border border-dashed border-border bg-card/60 p-8 text-center">                    <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-primary/10 text-primary">
+                      <CookingPot className="size-7" />
+                    </span>
+                    <h3 className="mt-2 font-bold">Your shortlist appears here</h3>
                   <p className="mx-auto mt-1 max-w-xs text-sm leading-6 text-muted-foreground">
                     Tap 3–4 ingredients you actually have. We&apos;ll suggest
                     dishes you can cook right now.

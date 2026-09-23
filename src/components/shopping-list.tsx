@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { INGREDIENT_BY_ID, INGREDIENT_CATEGORIES } from "@/data/ingredients";
-import { ingredientEmoji, ingredientLabel } from "@/data/recipes";
+import { ingredientLabel } from "@/data/recipes";
 import type { ScoredRecipe } from "@/lib/recipe-matcher";
 import { Check, CheckSquare, ClipboardCopy, ShoppingBasket, X } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -55,25 +55,25 @@ export function ShoppingListDialog({
     });
 
   const copyList = async () => {
-    const lines: string[] = ["🛒 Shopping list for tonight's picks:"];
+    const lines: string[] = ["Shopping list for tonight's picks:"];
     grouped.forEach(({ category, items }) => {
       const unticked = items.filter(([id]) => !ticked.has(id));
       if (unticked.length === 0) return;
       lines.push(`\n${category}:`);
       unticked.forEach(([id, count]) => {
         lines.push(
-          `${ticked.has(id) ? "☑" : "☐"} ${ingredientEmoji(id)} ${ingredientLabel(id)}${
+          `[${ticked.has(id) ? "x" : " "}] ${ingredientLabel(id)}${
             count > 1 ? ` (×${count})` : ""
           }`,
         );
       });
     });
-    lines.push("\nMade with What Should I Cook? 🍳");
+    lines.push("\nMade with What Should I Cook?");
     try {
       await navigator.clipboard.writeText(lines.join("\n"));
-      toast("Shopping list copied! 🛒");
+      toast("Shopping list copied!");
     } catch {
-      toast("Copy isn't available here — screenshot the list! 📸");
+      toast("Copy isn't available here — screenshot the list!");
     }
   };
 
@@ -88,7 +88,7 @@ export function ShoppingListDialog({
             {matches.length === 0
               ? "Pick some ingredients first and we'll build your list."
               : `${remaining} of ${total} to grab${
-                  remaining === 0 ? " — all ticked off! 🎉" : ""
+                  remaining === 0 ? " — all ticked off!" : ""
                 }`}
           </DialogDescription>
         </DialogHeader>
@@ -96,7 +96,7 @@ export function ShoppingListDialog({
         <div className="max-h-[45vh] overflow-y-auto pr-1">
           {grouped.length === 0 ? (
             <p className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-              🎉 Nothing missing — you already have everything these recipes need!
+              Nothing missing — you already have everything these recipes need!
             </p>
           ) : (
             <div className="space-y-5">
@@ -131,7 +131,6 @@ export function ShoppingListDialog({
                           >
                             {done && <Check className="size-3.5" />}
                           </span>
-                          <span aria-hidden>{ingredientEmoji(id)}</span>
                           <span className="flex-1">{ingredientLabel(id)}</span>
                           {count > 1 && (
                             <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">

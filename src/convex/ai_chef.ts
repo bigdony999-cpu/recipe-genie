@@ -44,7 +44,7 @@ export const askChef = action({
       return {
         ok: false as const,
         reason: "too-many-messages",
-        reply: "That's a long conversation — let's start a fresh chat. 🍳",
+        reply: "That's a long conversation — let's start a fresh chat.",
       };
     }
     if (messages.some((m) => m.content.length > MAX_MESSAGE_LENGTH)) {
@@ -68,7 +68,7 @@ export const askChef = action({
       return {
         ok: false as const,
         reason: "rate-limited",
-        reply: "The chef is busy right now — give it a minute and try again. 👨‍🍳",
+        reply: "The chef is busy right now — give it a minute and try again.",
       };
     }
 
